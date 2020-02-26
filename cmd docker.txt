@@ -1,0 +1,4 @@
+Faire maj+clic droit
+Ouvrir powershell ici 
+docker-compose up -d <= allumer
+docker-compose down <= éteindre
