@@ -1,39 +1,24 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KMAP_API.Models
 {
-    [Table("Vehicule")]
-    public class Vehicule
+    public class VEHICULE
     {
-        [Key]
-        [Column("id")]
         public Guid Id { get; set; }
-
-        [ForeignKey("Site")]
-        public Guid IdSite { get; set; }
-        public Site Site { get; set; }
-
-        [Column("numImmat")]
-        [MaxLength(8)]
         public string NumImmat { get; set; }
-
-        [Column("modele")]
-        [MaxLength(32)]
         public string Modele { get; set; }
-
-        [Column("nbPlaces")]
         public int NbPlaces { get; set; }
-
-        [Column("nbPortes")]
         public int NbPortes { get; set; }
-
-        [Column("typeCarbu")]
-        [MaxLength(16)]
         public string TypeCarbu { get; set; }
-
-        [Column("actif")]
         public bool Actif { get; set; }
+
+        public SITE Site { get; set; }
+
+        public ICollection<RESERVATION> Reservations { get; set; }
+        public ICollection<CLE> Cles { get; set; }
     }
 }
