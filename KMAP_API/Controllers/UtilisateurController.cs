@@ -23,14 +23,14 @@ namespace KMAP_API.Controllers
 
         // GET: api/Utilisateur
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UTILISATEUR>>> GetUtilisateur()
+        public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
         {
             return await _context.Utilisateur.ToListAsync();
         }
 
         // GET: api/Utilisateur/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UTILISATEUR>> GetUTILISATEUR(Guid id)
+        public async Task<ActionResult<Utilisateur>> GetUTILISATEUR(Guid id)
         {
             var uTILISATEUR = await _context.Utilisateur.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUTILISATEUR(Guid id, UTILISATEUR uTILISATEUR)
+        public async Task<IActionResult> PutUTILISATEUR(Guid id, Utilisateur uTILISATEUR)
         {
             if (id != uTILISATEUR.Id)
             {
@@ -78,7 +78,7 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<UTILISATEUR>> PostUTILISATEUR(UTILISATEUR uTILISATEUR)
+        public async Task<ActionResult<Utilisateur>> PostUTILISATEUR(Utilisateur uTILISATEUR)
         {
             _context.Utilisateur.Add(uTILISATEUR);
             await _context.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace KMAP_API.Controllers
 
         // DELETE: api/Utilisateur/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UTILISATEUR>> DeleteUTILISATEUR(Guid id)
+        public async Task<ActionResult<Utilisateur>> DeleteUTILISATEUR(Guid id)
         {
             var uTILISATEUR = await _context.Utilisateur.FindAsync(id);
             if (uTILISATEUR == null)

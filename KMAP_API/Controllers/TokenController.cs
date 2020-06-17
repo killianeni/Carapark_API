@@ -27,7 +27,7 @@ namespace KMAP_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(UTILISATEUR _userData)
+        public async Task<IActionResult> Post(Utilisateur _userData)
         {
 
             if (_userData != null && _userData.Mail != null && _userData.Password != null)
@@ -68,7 +68,7 @@ namespace KMAP_API.Controllers
             }
         }
 
-        private async Task<UTILISATEUR> GetUser(string email, string password)
+        private async Task<Utilisateur> GetUser(string email, string password)
         {
             return await _context.Utilisateur.FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
         }
