@@ -13,48 +13,48 @@ namespace KMAP_API.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonnelController : ControllerBase
+    public class UtilisateursController : ControllerBase
     {
         private readonly KmapContext _context;
 
-        public PersonnelController(KmapContext context)
+        public UtilisateursController(KmapContext context)
         {
             _context = context;
         }
 
-        // GET: api/Personnel
+        // GET: api/Utilisateurs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Personnel>>> GetPersonnel()
+        public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
         {
-            return await _context.Personnel.ToListAsync();
+            return await _context.Utilisateur.ToListAsync();
         }
 
-        // GET: api/Personnel/5
+        // GET: api/Utilisateurs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Personnel>> GetPersonnel(Guid id)
+        public async Task<ActionResult<Utilisateur>> GetUtilisateur(Guid id)
         {
-            var personnel = await _context.Personnel.FindAsync(id);
+            var utilisateur = await _context.Utilisateur.FindAsync(id);
 
-            if (personnel == null)
+            if (utilisateur == null)
             {
                 return NotFound();
             }
 
-            return personnel;
+            return utilisateur;
         }
 
-        // PUT: api/Personnel/5
+        // PUT: api/Utilisateurs/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonnel(Guid id, Personnel personnel)
+        public async Task<IActionResult> PutUtilisateur(Guid id, Utilisateur utilisateur)
         {
-            if (id != personnel.Id)
+            if (id != utilisateur.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(personnel).State = EntityState.Modified;
+            _context.Entry(utilisateur).State = EntityState.Modified;
 
             try
             {
@@ -62,7 +62,7 @@ namespace KMAP_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PersonnelExists(id))
+                if (!UtilisateurExists(id))
                 {
                     return NotFound();
                 }
@@ -75,37 +75,37 @@ namespace KMAP_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Personnel
+        // POST: api/Utilisateurs
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Personnel>> PostPersonnel(Personnel personnel)
+        public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
         {
-            _context.Personnel.Add(personnel);
+            _context.Utilisateur.Add(utilisateur);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPersonnel", new { id = personnel.Id }, personnel);
+            return CreatedAtAction("GetUtilisateur", new { id = utilisateur.Id }, utilisateur);
         }
 
-        // DELETE: api/Personnel/5
+        // DELETE: api/Utilisateurs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Personnel>> DeletePersonnel(Guid id)
+        public async Task<ActionResult<Utilisateur>> DeleteUtilisateur(Guid id)
         {
-            var personnel = await _context.Personnel.FindAsync(id);
-            if (personnel == null)
+            var utilisateur = await _context.Utilisateur.FindAsync(id);
+            if (utilisateur == null)
             {
                 return NotFound();
             }
 
-            _context.Personnel.Remove(personnel);
+            _context.Utilisateur.Remove(utilisateur);
             await _context.SaveChangesAsync();
 
-            return personnel;
+            return utilisateur;
         }
 
-        private bool PersonnelExists(Guid id)
+        private bool UtilisateurExists(Guid id)
         {
-            return _context.Personnel.Any(e => e.Id == id);
+            return _context.Utilisateur.Any(e => e.Id == id);
         }
     }
 }
