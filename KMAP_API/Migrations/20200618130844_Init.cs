@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace KMAP_API.Migrations
 {
-    public partial class InitialEntities : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -37,15 +37,46 @@ namespace KMAP_API.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Libelle = table.Column<string>(nullable: true),
-                    ENTREPRISEId = table.Column<Guid>(nullable: true)
+                    EntrepriseId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Site", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Site_Entreprise_ENTREPRISEId",
-                        column: x => x.ENTREPRISEId,
+                        name: "FK_Site_Entreprise_EntrepriseId",
+                        column: x => x.EntrepriseId,
                         principalTable: "Entreprise",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Personnel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Nom = table.Column<string>(nullable: true),
+                    Prenom = table.Column<string>(nullable: true),
+                    Mail = table.Column<string>(nullable: true),
+                    Permis = table.Column<string>(nullable: true),
+                    SiteId = table.Column<Guid>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false),
+                    Password = table.Column<string>(nullable: true),
+                    RoleId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Personnel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Personnel_Site_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Site",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Personnel_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -119,6 +150,12 @@ namespace KMAP_API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Reservation_Personnel_UtilisateurId",
+                        column: x => x.UtilisateurId,
+                        principalTable: "Personnel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Reservation_Vehicule_VehiculeId",
                         column: x => x.VehiculeId,
                         principalTable: "Vehicule",
@@ -127,63 +164,25 @@ namespace KMAP_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Personnel",
+                name: "Personnel_Reservations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    Nom = table.Column<string>(nullable: true),
-                    Prenom = table.Column<string>(nullable: true),
-                    Mail = table.Column<string>(nullable: true),
-                    Permis = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    RESERVATIONId = table.Column<Guid>(nullable: true),
-                    SITEId = table.Column<Guid>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
-                    RoleId = table.Column<Guid>(nullable: true)
+                    PersonnelId = table.Column<Guid>(nullable: false),
+                    ReservationID = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Personnel", x => x.Id);
+                    table.PrimaryKey("PK_Personnel_Reservations", x => new { x.PersonnelId, x.ReservationID });
                     table.ForeignKey(
-                        name: "FK_Personnel_Reservation_RESERVATIONId",
-                        column: x => x.RESERVATIONId,
-                        principalTable: "Reservation",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Personnel_Site_SITEId",
-                        column: x => x.SITEId,
-                        principalTable: "Site",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Personnel_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ReservationUtilisateur",
-                columns: table => new
-                {
-                    IdUtilisateur = table.Column<Guid>(nullable: false),
-                    IdReservation = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReservationUtilisateur", x => new { x.IdUtilisateur, x.IdReservation });
-                    table.ForeignKey(
-                        name: "FK_ReservationUtilisateur_Reservation_IdReservation",
-                        column: x => x.IdReservation,
-                        principalTable: "Reservation",
+                        name: "FK_Personnel_Reservations_Personnel_PersonnelId",
+                        column: x => x.PersonnelId,
+                        principalTable: "Personnel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReservationUtilisateur_Personnel_IdUtilisateur",
-                        column: x => x.IdUtilisateur,
-                        principalTable: "Personnel",
+                        name: "FK_Personnel_Reservations_Reservation_ReservationID",
+                        column: x => x.ReservationID,
+                        principalTable: "Reservation",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -194,19 +193,19 @@ namespace KMAP_API.Migrations
                 column: "VehiculeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Personnel_RESERVATIONId",
+                name: "IX_Personnel_SiteId",
                 table: "Personnel",
-                column: "RESERVATIONId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Personnel_SITEId",
-                table: "Personnel",
-                column: "SITEId");
+                column: "SiteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Personnel_RoleId",
                 table: "Personnel",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Personnel_Reservations_ReservationID",
+                table: "Personnel_Reservations",
+                column: "ReservationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservation_CleId",
@@ -224,48 +223,20 @@ namespace KMAP_API.Migrations
                 column: "VehiculeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationUtilisateur_IdReservation",
-                table: "ReservationUtilisateur",
-                column: "IdReservation");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Site_ENTREPRISEId",
+                name: "IX_Site_EntrepriseId",
                 table: "Site",
-                column: "ENTREPRISEId");
+                column: "EntrepriseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicule_SiteId",
                 table: "Vehicule",
                 column: "SiteId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Reservation_Personnel_UtilisateurId",
-                table: "Reservation",
-                column: "UtilisateurId",
-                principalTable: "Personnel",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Cle_Vehicule_VehiculeId",
-                table: "Cle");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Reservation_Vehicule_VehiculeId",
-                table: "Reservation");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Personnel_Reservation_RESERVATIONId",
-                table: "Personnel");
-
             migrationBuilder.DropTable(
-                name: "ReservationUtilisateur");
-
-            migrationBuilder.DropTable(
-                name: "Vehicule");
+                name: "Personnel_Reservations");
 
             migrationBuilder.DropTable(
                 name: "Reservation");
@@ -277,10 +248,13 @@ namespace KMAP_API.Migrations
                 name: "Personnel");
 
             migrationBuilder.DropTable(
-                name: "Site");
+                name: "Vehicule");
 
             migrationBuilder.DropTable(
                 name: "Role");
+
+            migrationBuilder.DropTable(
+                name: "Site");
 
             migrationBuilder.DropTable(
                 name: "Entreprise");

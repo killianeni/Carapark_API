@@ -27,7 +27,7 @@ namespace KMAP_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(UTILISATEUR _userData)
+        public async Task<IActionResult> Post(Utilisateur _userData)
         {
 
             if (_userData != null && _userData.Mail != null && _userData.Password != null)
@@ -38,16 +38,15 @@ namespace KMAP_API.Controllers
                 {
                     //create claims details based on the user information
                     var claims = new[] {
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("Id", user.Id.ToString()),
-                    new Claim("Prenom", user.Prenom),
-                    new Claim("Nom", user.Nom),
-                    new Claim("Mail", user.Mail),
-                    new Claim("Permis", user.Permis),
-                    new Claim("Role", user.Role.Libelle)
-                   };
+                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("Id", user.Id.ToString()),
+                        new Claim("Prenom", user.Prenom),
+                        new Claim("Nom", user.Nom),
+                        new Claim("Mail", user.Mail),
+                        new Claim("Permis", user.Permis)
+                    };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
@@ -68,7 +67,7 @@ namespace KMAP_API.Controllers
             }
         }
 
-        private async Task<UTILISATEUR> GetUser(string email, string password)
+        private async Task<Utilisateur> GetUser(string email, string password)
         {
             return await _context.Utilisateur.FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
         }

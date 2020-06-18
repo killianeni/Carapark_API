@@ -12,27 +12,19 @@ namespace KMAP_API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ReservationUtilisateur>()
-                .HasKey(ru => new { ru.IdUtilisateur, ru.IdReservation });
-            modelBuilder.Entity<ReservationUtilisateur>()
-                .HasOne(ru => ru.Reservation)
-                .WithMany(r => r.ReservationUtilisateurs)
-                .HasForeignKey(ru => ru.IdReservation);
-            modelBuilder.Entity<ReservationUtilisateur>()
-                .HasOne(ru => ru.Utilisateur)
-                .WithMany(u => u.ReservationUtilisateurs)
-                .HasForeignKey(ru => ru.IdUtilisateur);
+            modelBuilder.Entity<Personnel_Reservation>()
+                .HasKey(pr => new { pr.PersonnelId, pr.ReservationID });
         }
 
-        public DbSet<UTILISATEUR> Utilisateur { get; set; }
-        public DbSet<CLE> Cle { get; set; }
-        public DbSet<ENTREPRISE> Entreprise { get; set; }
-        public DbSet<PERSONNEL> Personnel { get; set; }
-        public DbSet<RESERVATION> Reservation { get; set; }
-        public DbSet<ROLE> Role { get; set; }
-        public DbSet<ReservationUtilisateur> ReservationUtilisateur { get; set; }
-        public DbSet<SITE> Site { get; set; }
-        public DbSet<VEHICULE> Vehicule { get; set; }
+        public DbSet<Utilisateur> Utilisateur { get; set; }
+        public DbSet<Cle> Cle { get; set; }
+        public DbSet<Entreprise> Entreprise { get; set; }
+        public DbSet<Personnel> Personnel { get; set; }
+        public DbSet<Reservation> Reservation { get; set; }
+        public DbSet<Role> Role { get; set; }
+        public DbSet<Site> Site { get; set; }
+        public DbSet<Vehicule> Vehicule { get; set; }
+        public DbSet<Personnel_Reservation> Personnel_Reservations { get; set; }
 
     }
 }

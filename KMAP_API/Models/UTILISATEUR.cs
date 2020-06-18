@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace KMAP_API.Models
 {
-    public class UTILISATEUR : PERSONNEL
+    public class Utilisateur : Personnel
     {
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        public ROLE Role { get; set; }
+        public Role Role { get; set; }
 
-        public ICollection<ReservationUtilisateur> ReservationUtilisateurs { get; set; }
+        public Utilisateur() : base()
+        {
+
+        }
     }
 }

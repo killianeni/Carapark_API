@@ -1,59 +1,60 @@
-﻿using System;
+﻿using KMAP_API.Data;
+using KMAP_API.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KMAP_API.Data;
-using KMAP_API.Models;
 
 namespace KMAP_API.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
-    public class UtilisateurController : ControllerBase
+    public class UtilisateursController : ControllerBase
     {
         private readonly KmapContext _context;
 
-        public UtilisateurController(KmapContext context)
+        public UtilisateursController(KmapContext context)
         {
             _context = context;
         }
 
-        // GET: api/Utilisateur
+        // GET: api/Utilisateurs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UTILISATEUR>>> GetUtilisateur()
+        public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
         {
             return await _context.Utilisateur.ToListAsync();
         }
 
-        // GET: api/Utilisateur/5
+        // GET: api/Utilisateurs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UTILISATEUR>> GetUTILISATEUR(Guid id)
+        public async Task<ActionResult<Utilisateur>> GetUtilisateur(Guid id)
         {
-            var uTILISATEUR = await _context.Utilisateur.FindAsync(id);
+            var utilisateur = await _context.Utilisateur.FindAsync(id);
 
-            if (uTILISATEUR == null)
+            if (utilisateur == null)
             {
                 return NotFound();
             }
 
-            return uTILISATEUR;
+            return utilisateur;
         }
 
-        // PUT: api/Utilisateur/5
+        // PUT: api/Utilisateurs/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUTILISATEUR(Guid id, UTILISATEUR uTILISATEUR)
+        public async Task<IActionResult> PutUtilisateur(Guid id, Utilisateur utilisateur)
         {
-            if (id != uTILISATEUR.Id)
+            if (id != utilisateur.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(uTILISATEUR).State = EntityState.Modified;
+            _context.Entry(utilisateur).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +62,7 @@ namespace KMAP_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UTILISATEURExists(id))
+                if (!UtilisateurExists(id))
                 {
                     return NotFound();
                 }
@@ -74,35 +75,35 @@ namespace KMAP_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Utilisateur
+        // POST: api/Utilisateurs
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<UTILISATEUR>> PostUTILISATEUR(UTILISATEUR uTILISATEUR)
+        public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
         {
-            _context.Utilisateur.Add(uTILISATEUR);
+            _context.Utilisateur.Add(utilisateur);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUTILISATEUR", new { id = uTILISATEUR.Id }, uTILISATEUR);
+            return CreatedAtAction("GetUtilisateur", new { id = utilisateur.Id }, utilisateur);
         }
 
-        // DELETE: api/Utilisateur/5
+        // DELETE: api/Utilisateurs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UTILISATEUR>> DeleteUTILISATEUR(Guid id)
+        public async Task<ActionResult<Utilisateur>> DeleteUtilisateur(Guid id)
         {
-            var uTILISATEUR = await _context.Utilisateur.FindAsync(id);
-            if (uTILISATEUR == null)
+            var utilisateur = await _context.Utilisateur.FindAsync(id);
+            if (utilisateur == null)
             {
                 return NotFound();
             }
 
-            _context.Utilisateur.Remove(uTILISATEUR);
+            _context.Utilisateur.Remove(utilisateur);
             await _context.SaveChangesAsync();
 
-            return uTILISATEUR;
+            return utilisateur;
         }
 
-        private bool UTILISATEURExists(Guid id)
+        private bool UtilisateurExists(Guid id)
         {
             return _context.Utilisateur.Any(e => e.Id == id);
         }
