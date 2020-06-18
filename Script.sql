@@ -1,3 +1,255 @@
+-- Drop all
+--DROP TABLE public."Entreprise" CASCADE;
+--DROP TABLE public."Site" CASCADE;
+--DROP TABLE public."Vehicule" CASCADE;
+--DROP TABLE public."Cle" CASCADE;
+--DROP TABLE public."Role" CASCADE;
+--DROP TABLE public."Personnel" CASCADE;
+--DROP TABLE public."Reservation" CASCADE;
+--DROP TABLE public."Personnel_Reservations" CASCADE;
+
+----------------------------------------------------------------------------------------------------------
+-- Drop Index
+--DROP INDEX public."IX_Site_EntrepriseId";
+--DROP INDEX public."IX_Cle_VehiculeId";
+--DROP INDEX public."IX_Personnel_RoleId";
+--DROP INDEX public."IX_Personnel_SiteId";
+--DROP INDEX public."IX_Reservation_VehiculeId";
+--DROP INDEX public."IX_Reservation_CleId";
+--DROP INDEX public."IX_Reservation_UtilisateurId";
+--DROP INDEX public."IX_Personnel_Reservations_ReservationID";
+
+----------------------------------------------------------------------------------------------------------
+-- Create tables
+
+-- Table: public."Entreprise"
+CREATE TABLE public."Entreprise"
+(
+    "Id" uuid NOT NULL,
+    "Libelle" text COLLATE pg_catalog."default",
+    CONSTRAINT "PK_Entreprise" PRIMARY KEY ("Id")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Entreprise"
+    OWNER to kmap_admin;
+
+-- Table: public."Site"
+CREATE TABLE public."Site"
+(
+    "Id" uuid NOT NULL,
+    "Libelle" text COLLATE pg_catalog."default",
+    "EntrepriseId" uuid,
+    CONSTRAINT "PK_Site" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Site_Entreprise_EntrepriseId" FOREIGN KEY ("EntrepriseId")
+        REFERENCES public."Entreprise" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."Site"
+    OWNER to kmap_admin;
+
+-- Table: public."Vehicule"
+CREATE TABLE public."Vehicule"
+(
+    "Id" uuid NOT NULL,
+    "NumImmat" text COLLATE pg_catalog."default",
+    "Modele" text COLLATE pg_catalog."default",
+    "NbPlaces" integer NOT NULL,
+    "NbPortes" integer NOT NULL,
+    "TypeCarbu" text COLLATE pg_catalog."default",
+    "Actif" boolean NOT NULL,
+    "SiteId" uuid,
+    CONSTRAINT "PK_Vehicule" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Vehicule_Site_SiteId" FOREIGN KEY ("SiteId")
+        REFERENCES public."Site" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Vehicule"
+    OWNER to kmap_admin;
+
+-- Table: public."Cle"
+CREATE TABLE public."Cle"
+(
+    "Id" uuid NOT NULL,
+    "Libelle" text COLLATE pg_catalog."default",
+    "VehiculeId" uuid,
+    CONSTRAINT "PK_Cle" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Cle_Vehicule_VehiculeId" FOREIGN KEY ("VehiculeId")
+        REFERENCES public."Vehicule" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Cle"
+    OWNER to kmap_admin;
+
+-- Table: public."Role"
+CREATE TABLE public."Role"
+(
+    "Id" uuid NOT NULL,
+    "Libelle" text COLLATE pg_catalog."default",
+    CONSTRAINT "PK_Role" PRIMARY KEY ("Id")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Role"
+    OWNER to kmap_admin;
+
+-- Table: public."Personnel"
+CREATE TABLE public."Personnel"
+(
+    "Id" uuid NOT NULL,
+    "Nom" text COLLATE pg_catalog."default",
+    "Prenom" text COLLATE pg_catalog."default",
+    "Mail" text COLLATE pg_catalog."default",
+    "Permis" text COLLATE pg_catalog."default",
+    "SiteId" uuid,
+    "Discriminator" text COLLATE pg_catalog."default" NOT NULL,
+    "Password" text COLLATE pg_catalog."default",
+    "RoleId" uuid,
+    CONSTRAINT "PK_Personnel" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Personnel_Role_RoleId" FOREIGN KEY ("RoleId")
+        REFERENCES public."Role" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT "FK_Personnel_Site_SiteId" FOREIGN KEY ("SiteId")
+        REFERENCES public."Site" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Personnel"
+    OWNER to kmap_admin;
+
+-- Table: public."Reservation"
+CREATE TABLE public."Reservation"
+(
+    "Id" uuid NOT NULL,
+    "SiteDestination" text COLLATE pg_catalog."default",
+    "ConfirmationCle" boolean NOT NULL,
+    "DateDebut" timestamp without time zone NOT NULL,
+    "DateFin" timestamp without time zone NOT NULL,
+    "Description" text COLLATE pg_catalog."default",
+    "UtilisateurId" uuid,
+    "VehiculeId" uuid,
+    "CleId" uuid,
+    CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
+        REFERENCES public."Cle" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT "FK_Reservation_Personnel_UtilisateurId" FOREIGN KEY ("UtilisateurId")
+        REFERENCES public."Personnel" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT "FK_Reservation_Vehicule_VehiculeId" FOREIGN KEY ("VehiculeId")
+        REFERENCES public."Vehicule" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Reservation"
+    OWNER to kmap_admin;
+
+-- Table: public."Personnel_Reservations"
+CREATE TABLE public."Personnel_Reservations"
+(
+    "PersonnelId" uuid NOT NULL,
+    "ReservationID" uuid NOT NULL,
+    CONSTRAINT "PK_Personnel_Reservations" PRIMARY KEY ("PersonnelId", "ReservationID"),
+    CONSTRAINT "FK_Personnel_Reservations_Personnel_PersonnelId" FOREIGN KEY ("PersonnelId")
+        REFERENCES public."Personnel" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT "FK_Personnel_Reservations_Reservation_ReservationID" FOREIGN KEY ("ReservationID")
+        REFERENCES public."Reservation" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Personnel_Reservations"
+    OWNER to kmap_admin;
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+-- Index 
+
+-- Index: IX_Site_EntrepriseId
+CREATE INDEX "IX_Site_EntrepriseId"
+    ON public."Site" USING btree
+    ("EntrepriseId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Vehicule_SiteId
+CREATE INDEX "IX_Vehicule_SiteId"
+    ON public."Vehicule" USING btree
+    ("SiteId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Cle_VehiculeId
+CREATE INDEX "IX_Cle_VehiculeId"
+    ON public."Cle" USING btree
+    ("VehiculeId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Personnel_RoleId
+CREATE INDEX "IX_Personnel_RoleId"
+    ON public."Personnel" USING btree
+    ("RoleId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Personnel_SiteId
+CREATE INDEX "IX_Personnel_SiteId"
+    ON public."Personnel" USING btree
+    ("SiteId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Reservation_CleId
+CREATE INDEX "IX_Reservation_CleId"
+    ON public."Reservation" USING btree
+    ("CleId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Reservation_UtilisateurId
+CREATE INDEX "IX_Reservation_UtilisateurId"
+    ON public."Reservation" USING btree
+    ("UtilisateurId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Reservation_VehiculeId
+CREATE INDEX "IX_Reservation_VehiculeId"
+    ON public."Reservation" USING btree
+    ("VehiculeId" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: IX_Personnel_Reservations_ReservationID
+CREATE INDEX "IX_Personnel_Reservations_ReservationID"
+    ON public."Personnel_Reservations" USING btree
+    ("ReservationID" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+----------------------------------------------------------------------------------------------------------
+-- Add data
+
 -- Entreprise
 INSERT INTO public."Entreprise"("Id", "Libelle") VALUES('253ff149-f310-403e-a4ab-0b6722d941db', 'ENI');
 INSERT INTO public."Entreprise"("Id", "Libelle") VALUES('10912df1-f5d2-44e9-98ea-8dd417c744be', 'KMAP');
