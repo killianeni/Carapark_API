@@ -38,16 +38,15 @@ namespace KMAP_API.Controllers
                 {
                     //create claims details based on the user information
                     var claims = new[] {
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("Id", user.Id.ToString()),
-                    new Claim("Prenom", user.Prenom),
-                    new Claim("Nom", user.Nom),
-                    new Claim("Mail", user.Mail),
-                    new Claim("Permis", user.Permis),
-                    new Claim("Role", user.Role.Libelle)
-                   };
+                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("Id", user.Id.ToString()),
+                        new Claim("Prenom", user.Prenom),
+                        new Claim("Nom", user.Nom),
+                        new Claim("Mail", user.Mail),
+                        new Claim("Permis", user.Permis)
+                    };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 

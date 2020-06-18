@@ -1,14 +1,13 @@
 ﻿using KMAP_API.Data;
-using KMAP_API.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Npgsql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using System.Text;
 
 namespace KMAP_API
@@ -25,6 +24,7 @@ namespace KMAP_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -50,7 +50,7 @@ namespace KMAP_API
             };
 
             services.AddDbContext<KmapContext>(options => options.UseNpgsql(builder.ConnectionString));
-            
+
             // Register the Swagger services
             services.AddSwaggerDocument(config =>
             {

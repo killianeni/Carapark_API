@@ -20,10 +20,6 @@ namespace KMAP_API.Models
 
         public DateTime DateFin { get; set; }
 
-        public DateTime HeureDebut { get; set; }
-
-        public DateTime Heurefin { get; set; }
-
         public string Description { get; set; }
 
         //Clé étrangère
@@ -33,10 +29,7 @@ namespace KMAP_API.Models
 
         public Cle Cle { get; set; }
 
-        //Collection pour OneToMany
-        public ICollection<Personnel> Personnels { get; set; }
-
-        public ICollection<ReservationUtilisateur> ReservationUtilisateurs { get; set; }
+        public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
 
         public Reservation()
         {

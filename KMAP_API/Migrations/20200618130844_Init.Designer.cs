@@ -10,18 +10,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KMAP_API.Migrations
 {
     [DbContext(typeof(KmapContext))]
-    [Migration("20200522150239_InitialEntities")]
-    partial class InitialEntities
+    [Migration("20200618130844_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("KMAP_API.Models.CLE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Cle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,7 +40,7 @@ namespace KMAP_API.Migrations
                     b.ToTable("Cle");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.ENTREPRISE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Entreprise", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace KMAP_API.Migrations
                     b.ToTable("Entreprise");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.PERSONNEL", b =>
+            modelBuilder.Entity("KMAP_API.Models.Personnel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -76,24 +76,34 @@ namespace KMAP_API.Migrations
                     b.Property<string>("Prenom")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RESERVATIONId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SITEId")
+                    b.Property<Guid?>("SiteId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RESERVATIONId");
-
-                    b.HasIndex("SITEId");
+                    b.HasIndex("SiteId");
 
                     b.ToTable("Personnel");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("PERSONNEL");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Personnel");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.RESERVATION", b =>
+            modelBuilder.Entity("KMAP_API.Models.Personnel_Reservation", b =>
+                {
+                    b.Property<Guid>("PersonnelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ReservationID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PersonnelId", "ReservationID");
+
+                    b.HasIndex("ReservationID");
+
+                    b.ToTable("Personnel_Reservations");
+                });
+
+            modelBuilder.Entity("KMAP_API.Models.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,7 +150,7 @@ namespace KMAP_API.Migrations
                     b.ToTable("Reservation");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.ROLE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -154,28 +164,13 @@ namespace KMAP_API.Migrations
                     b.ToTable("Role");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.ReservationUtilisateur", b =>
-                {
-                    b.Property<Guid>("IdUtilisateur")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("IdReservation")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("IdUtilisateur", "IdReservation");
-
-                    b.HasIndex("IdReservation");
-
-                    b.ToTable("ReservationUtilisateur");
-                });
-
-            modelBuilder.Entity("KMAP_API.Models.SITE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Site", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ENTREPRISEId")
+                    b.Property<Guid?>("EntrepriseId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Libelle")
@@ -183,12 +178,12 @@ namespace KMAP_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ENTREPRISEId");
+                    b.HasIndex("EntrepriseId");
 
                     b.ToTable("Site");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.VEHICULE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Vehicule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -222,9 +217,9 @@ namespace KMAP_API.Migrations
                     b.ToTable("Vehicule");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.UTILISATEUR", b =>
+            modelBuilder.Entity("KMAP_API.Models.Utilisateur", b =>
                 {
-                    b.HasBaseType("KMAP_API.Models.PERSONNEL");
+                    b.HasBaseType("KMAP_API.Models.Personnel");
 
                     b.Property<string>("Password")
                         .HasColumnType("text");
@@ -234,74 +229,70 @@ namespace KMAP_API.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasDiscriminator().HasValue("UTILISATEUR");
+                    b.HasDiscriminator().HasValue("Utilisateur");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.CLE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Cle", b =>
                 {
-                    b.HasOne("KMAP_API.Models.VEHICULE", "Vehicule")
+                    b.HasOne("KMAP_API.Models.Vehicule", "Vehicule")
                         .WithMany("Cles")
                         .HasForeignKey("VehiculeId");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.PERSONNEL", b =>
+            modelBuilder.Entity("KMAP_API.Models.Personnel", b =>
                 {
-                    b.HasOne("KMAP_API.Models.RESERVATION", null)
+                    b.HasOne("KMAP_API.Models.Site", "Site")
                         .WithMany("Personnels")
-                        .HasForeignKey("RESERVATIONId");
-
-                    b.HasOne("KMAP_API.Models.SITE", null)
-                        .WithMany("Personnels")
-                        .HasForeignKey("SITEId");
+                        .HasForeignKey("SiteId");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.RESERVATION", b =>
+            modelBuilder.Entity("KMAP_API.Models.Personnel_Reservation", b =>
                 {
-                    b.HasOne("KMAP_API.Models.CLE", "Cle")
+                    b.HasOne("KMAP_API.Models.Personnel", "Personnel")
+                        .WithMany("Personnel_Reservations")
+                        .HasForeignKey("PersonnelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KMAP_API.Models.Reservation", "Reservation")
+                        .WithMany("Personnel_Reservations")
+                        .HasForeignKey("ReservationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("KMAP_API.Models.Reservation", b =>
+                {
+                    b.HasOne("KMAP_API.Models.Cle", "Cle")
                         .WithMany()
                         .HasForeignKey("CleId");
 
-                    b.HasOne("KMAP_API.Models.UTILISATEUR", "Utilisateur")
+                    b.HasOne("KMAP_API.Models.Utilisateur", "Utilisateur")
                         .WithMany()
                         .HasForeignKey("UtilisateurId");
 
-                    b.HasOne("KMAP_API.Models.VEHICULE", "Vehicule")
+                    b.HasOne("KMAP_API.Models.Vehicule", "Vehicule")
                         .WithMany("Reservations")
                         .HasForeignKey("VehiculeId");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.ReservationUtilisateur", b =>
+            modelBuilder.Entity("KMAP_API.Models.Site", b =>
                 {
-                    b.HasOne("KMAP_API.Models.RESERVATION", "Reservation")
-                        .WithMany("ReservationUtilisateurs")
-                        .HasForeignKey("IdReservation")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KMAP_API.Models.UTILISATEUR", "Utilisateur")
-                        .WithMany("ReservationUtilisateurs")
-                        .HasForeignKey("IdUtilisateur")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("KMAP_API.Models.SITE", b =>
-                {
-                    b.HasOne("KMAP_API.Models.ENTREPRISE", null)
+                    b.HasOne("KMAP_API.Models.Entreprise", "Entreprise")
                         .WithMany("Sites")
-                        .HasForeignKey("ENTREPRISEId");
+                        .HasForeignKey("EntrepriseId");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.VEHICULE", b =>
+            modelBuilder.Entity("KMAP_API.Models.Vehicule", b =>
                 {
-                    b.HasOne("KMAP_API.Models.SITE", "Site")
+                    b.HasOne("KMAP_API.Models.Site", "Site")
                         .WithMany("Vehicules")
                         .HasForeignKey("SiteId");
                 });
 
-            modelBuilder.Entity("KMAP_API.Models.UTILISATEUR", b =>
+            modelBuilder.Entity("KMAP_API.Models.Utilisateur", b =>
                 {
-                    b.HasOne("KMAP_API.Models.ROLE", "Role")
+                    b.HasOne("KMAP_API.Models.Role", "Role")
                         .WithMany("Utilisateurs")
                         .HasForeignKey("RoleId");
                 });

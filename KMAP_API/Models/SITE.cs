@@ -13,6 +13,8 @@ namespace KMAP_API.Models
 
         public string Libelle { get; set; }
 
+        public Entreprise Entreprise { get; set; }
+
         public ICollection<Personnel> Personnels { get; set; }
 
         public ICollection<Vehicule> Vehicules { get; set; }
