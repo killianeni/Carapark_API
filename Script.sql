@@ -1,23 +1,12 @@
 -- Drop all
---DROP TABLE public."Entreprise" CASCADE;
---DROP TABLE public."Site" CASCADE;
---DROP TABLE public."Vehicule" CASCADE;
---DROP TABLE public."Cle" CASCADE;
---DROP TABLE public."Role" CASCADE;
---DROP TABLE public."Personnel" CASCADE;
---DROP TABLE public."Reservation" CASCADE;
---DROP TABLE public."Personnel_Reservations" CASCADE;
-
-----------------------------------------------------------------------------------------------------------
--- Drop Index
---DROP INDEX public."IX_Site_EntrepriseId";
---DROP INDEX public."IX_Cle_VehiculeId";
---DROP INDEX public."IX_Personnel_RoleId";
---DROP INDEX public."IX_Personnel_SiteId";
---DROP INDEX public."IX_Reservation_VehiculeId";
---DROP INDEX public."IX_Reservation_CleId";
---DROP INDEX public."IX_Reservation_UtilisateurId";
---DROP INDEX public."IX_Personnel_Reservations_ReservationID";
+--DROP TABLE IF EXISTS public."Entreprise" CASCADE;
+--DROP TABLE IF EXISTS public."Site" CASCADE;
+--DROP TABLE IF EXISTS public."Vehicule" CASCADE;
+--DROP TABLE IF EXISTS public."Cle" CASCADE;
+--DROP TABLE IF EXISTS public."Role" CASCADE;
+--DROP TABLE IF EXISTS public."Personnel" CASCADE;
+--DROP TABLE IF EXISTS public."Reservation" CASCADE;
+--DROP TABLE IF EXISTS public."Personnel_Reservations" CASCADE;
 
 ----------------------------------------------------------------------------------------------------------
 -- Create tables

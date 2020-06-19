@@ -26,7 +26,7 @@ namespace KMAP_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
         {
-            return await _context.Utilisateur.ToListAsync();
+            return await _context.Utilisateur.Include(u => u.Role).ToListAsync();
         }
 
         // GET: api/Utilisateurs/5
