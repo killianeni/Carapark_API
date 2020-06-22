@@ -1,5 +1,6 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
+using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,16 +25,21 @@ namespace KMAP_API.Controllers
 
         // GET: api/Utilisateurs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
+        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateur()
         {
-            return await _context.Utilisateur.ToListAsync();
+            var u = new List<UtilisateurViewModel>();
+            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ToListAsync())
+            {
+                u.Add(new UtilisateurViewModel(utilisateur));
+            }
+            return u;
         }
 
         // GET: api/Utilisateurs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Utilisateur>> GetUtilisateur(Guid id)
+        public async Task<ActionResult<UtilisateurViewModel>> GetUtilisateur(Guid id)
         {
-            var utilisateur = await _context.Utilisateur.FindAsync(id);
+            var utilisateur = new UtilisateurViewModel(await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).FirstOrDefaultAsync(u => u.Id == id));
 
             if (utilisateur == null)
             {

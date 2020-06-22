@@ -45,7 +45,8 @@ namespace KMAP_API.Controllers
                         new Claim("Prenom", user.Prenom),
                         new Claim("Nom", user.Nom),
                         new Claim("Mail", user.Mail),
-                        new Claim("Permis", user.Permis)
+                        new Claim("Permis", user.Permis),
+                        new Claim(ClaimTypes.Role, user.Role.Libelle)
                     };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -69,7 +70,7 @@ namespace KMAP_API.Controllers
 
         private async Task<Utilisateur> GetUser(string email, string password)
         {
-            return await _context.Utilisateur.FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
+            return await _context.Utilisateur.Include(u => u.Role).FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
         }
     }
 }
