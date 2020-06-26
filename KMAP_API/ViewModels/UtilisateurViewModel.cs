@@ -1,14 +1,14 @@
 ﻿using KMAP_API.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.ViewModels
 {
     public class UtilisateurViewModel
     {
         public Guid Id { get; set; }
+
+        public Guid IdEntreprise { get; set; }
 
         public string Nom { get; set; }
 
@@ -27,6 +27,7 @@ namespace KMAP_API.ViewModels
         public UtilisateurViewModel(Utilisateur u)
         {
             Id = u.Id;
+            IdEntreprise = u.Site.Entreprise.Id;
             Nom = u.Nom;
             Prenom = u.Prenom;
             Mail = u.Mail;
