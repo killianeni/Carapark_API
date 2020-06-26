@@ -70,52 +70,44 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Sites/idSite/typePage
-        [HttpGet("{id}/{typePage}")]
-        public async Task<ActionResult<SiteViewModel>> GetSite(Guid id, string typePage)
-        {
-            var siteRequest = _context.Site.Include(s => s.Entreprise);
+        //[HttpGet("{id}/{typePage}")]
+        //public async Task<ActionResult<SiteViewModel>> GetSite(Guid id, string typePage)
+        //{
+        //    var s = await _context.Site.Include(s => s.Entreprise).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).Include(u => u.Vehicules).FirstOrDefaultAsync(s => s.Id == id);
 
-            switch (typePage)
-            {
-                case "utilisateur":
-                    siteRequest.Include(u => u.Personnels);
-                    break;
-                case "reservation":
-                    siteRequest.Include(u => u.Vehicules).ThenInclude(v => v.Reservations);
-                    break;
-                case "vehicule":
-                    siteRequest.Include(u => u.Vehicules);
-                    break;
-            }
+        //    if (s != null)
+        //    {
+        //        var site = new SiteViewModel(s);
 
-            var s = await siteRequest.FirstOrDefaultAsync(s => s.Id == id);
+        //        switch (typePage)
+        //        {
+        //            case "utilisateur":
+        //                site.Utilisateurs = s.Personnels;
+        //                break;
+        //            case "reservation":
+        //                var resa = new List<Reservation>();
+        //                if (typePage == "reservation")
+        //                {
+        //                    foreach (var v in s.Vehicules)
+        //                    {
+        //                        foreach (var r in v.Reservations)
+        //                        {
+        //                            resa.Add(r);
+        //                        }
+        //                    }
+        //                }
+        //                site.Reservations = resa;
+        //                break;
+        //            case "vehicule":
+        //                site.Vehicules = s.Vehicules;
+        //                break;
+        //        }
 
-            if (s != null)
-            {
-                var resa = new List<Reservation>();
-                if (typePage == "reservation")
-                {
-                    foreach (var v in s.Vehicules)
-                    {
-                        foreach (var r in v.Reservations)
-                        {
-                            resa.Add(r);
-                        }
-                    }
-                }
+        //        return site;
+        //    }
 
-                var site = new SiteViewModel(s)
-                {
-                    Utilisateurs = s.Personnels,
-                    Reservations = resa,
-                    Vehicules = s.Vehicules
-                };
-
-                return site;
-            }
-
-            return NotFound();
-        }
+        //    return NotFound();
+        //}
 
         // PUT: api/Sites/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
