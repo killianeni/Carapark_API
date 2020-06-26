@@ -1,13 +1,12 @@
-﻿using System;
+﻿using KMAP_API.Data;
+using KMAP_API.Models;
+using KMAP_API.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KMAP_API.Data;
-using KMAP_API.Models;
-using KMAP_API.ViewModels;
 
 namespace KMAP_API.Controllers
 {
@@ -22,30 +21,100 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Sites
+        // GET: api/Sites/idEntreprise
+        [Route("GetSitebyEntreprise/{id}/{typePage}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SiteViewModel>>> GetSite()
+        public async Task<ActionResult<IEnumerable<SiteViewModel>>> GetSitebyEntreprise(Guid id, string typePage)
         {
-            var s = new List<SiteViewModel>();
-            foreach (var site in await _context.Site.Include(s => s.Entreprise).Include(s => s.Vehicules).Include(s => s.Personnels).ToListAsync())
+            var sites = new List<SiteViewModel>();
+
+            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).ToListAsync();
+
+            foreach (var site in siteRequest)
             {
-                s.Add(new SiteViewModel(site));
+                switch (typePage)
+                {
+                    case "utilisateur":
+                        sites.Add(
+                            new SiteViewModel(site)
+                            {
+                                NbUtilisateurs = site.Personnels.Count
+                            }
+                        );
+                        break;
+                    case "reservation":
+                        var nbResa = 0;
+                        foreach (var v in site.Vehicules)
+                        {
+                            nbResa += v.Reservations.Count;
+                        }
+
+                        sites.Add(new SiteViewModel(site)
+                        {
+                            NbReservations = nbResa
+                        }
+                    );
+                        break;
+                    case "vehicule":
+                        sites.Add(
+                            new SiteViewModel(site)
+                            {
+                                NbVehicules = site.Vehicules.Count
+                            }
+                        );
+                        break;
+                }
+
             }
-            return s;
+            return sites;
         }
 
-        // GET: api/Sites/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SiteViewModel>> GetSite(Guid id)
+        // GET: api/Sites/idSite/typePage
+        [HttpGet("{id}/{typePage}")]
+        public async Task<ActionResult<SiteViewModel>> GetSite(Guid id, string typePage)
         {
-            var site = new SiteViewModel(await _context.Site.Include(s => s.Entreprise).Include(s => s.Vehicules).Include(s => s.Personnels).FirstOrDefaultAsync(s => s.Id == id));
+            var siteRequest = _context.Site.Include(s => s.Entreprise);
 
-            if (site == null)
+            switch (typePage)
             {
-                return NotFound();
+                case "utilisateur":
+                    siteRequest.Include(u => u.Personnels);
+                    break;
+                case "reservation":
+                    siteRequest.Include(u => u.Vehicules).ThenInclude(v => v.Reservations);
+                    break;
+                case "vehicule":
+                    siteRequest.Include(u => u.Vehicules);
+                    break;
             }
 
-            return site;
+            var s = await siteRequest.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (s != null)
+            {
+                var resa = new List<Reservation>();
+                if (typePage == "reservation")
+                {
+                    foreach (var v in s.Vehicules)
+                    {
+                        foreach (var r in v.Reservations)
+                        {
+                            resa.Add(r);
+                        }
+                    }
+                }
+
+                var site = new SiteViewModel(s)
+                {
+                    Utilisateurs = s.Personnels,
+                    Reservations = resa,
+                    Vehicules = s.Vehicules
+                };
+
+                return site;
+            }
+
+            return NotFound();
         }
 
         // PUT: api/Sites/5
