@@ -1,5 +1,6 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
+using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,9 @@ namespace KMAP_API.Controllers
 
                     var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
 
-                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), user = user });
+                    var u = new UtilisateurViewModel(user);
+
+                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), user = u });
                 }
                 else
                 {
@@ -70,7 +73,7 @@ namespace KMAP_API.Controllers
 
         private async Task<Utilisateur> GetUser(string email, string password)
         {
-            return await _context.Utilisateur.Include(u => u.Role).FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
+            return await _context.Utilisateur.Include(u => u.Role).Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
         }
     }
 }
