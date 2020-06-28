@@ -1,5 +1,6 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
+using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,18 +23,37 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Utilisateurs
+        // GET: api/Utilisateurs/GetUtilisateursbyEntreprise
+        [Route("GetUtilisateursbyEntreprise/{id}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateur()
+        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbyEntreprise(Guid id)
         {
-            return await _context.Utilisateur.Include(u => u.Role).ToListAsync();
+            var u = new List<UtilisateurViewModel>();
+            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Entreprise.Id == id).ToListAsync())
+            {
+                u.Add(new UtilisateurViewModel(utilisateur));
+            }
+            return u;
+        }
+
+        // GET: api/Utilisateurs/GetUtilisateursbySite
+        [Route("GetUtilisateursbySite/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbySite(Guid id)
+        {
+            var u = new List<UtilisateurViewModel>();
+            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Id == id).ToListAsync())
+            {
+                u.Add(new UtilisateurViewModel(utilisateur));
+            }
+            return u;
         }
 
         // GET: api/Utilisateurs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Utilisateur>> GetUtilisateur(Guid id)
+        public async Task<ActionResult<UtilisateurViewModel>> GetUtilisateur(Guid id)
         {
-            var utilisateur = await _context.Utilisateur.FindAsync(id);
+            var utilisateur = new UtilisateurViewModel(await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).FirstOrDefaultAsync(u => u.Id == id));
 
             if (utilisateur == null)
             {
