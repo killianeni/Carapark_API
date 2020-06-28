@@ -14,6 +14,7 @@ namespace KMAP_API.Models
 
         public string Libelle { get; set; }
 
+        [JsonIgnore]
         public ICollection<Utilisateur> Utilisateurs { get; set; }
 
         public Role()
