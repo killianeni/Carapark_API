@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KMAP_API.Data;
+﻿using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -24,12 +23,17 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Reservations
+        // GET: api/Reservations/GetReservationsbyEntreprise
+        [Route("GetReservationsbyEntreprise/{id}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservation()
+        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsbyEntreprise(Guid id)
         {
             var r = new List<ReservationViewModel>();
-            foreach (var reservation in await _context.Reservation.Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel).Include(r => r.Utilisateur).Include(r => r.Vehicule).Include(r => r.Cle).ToListAsync())
+            foreach (var reservation in await _context.Reservation
+                .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
+                .Include(r => r.Utilisateur)
+                .Include(r => r.Vehicule).ThenInclude(r => r.Site).ThenInclude(r => r.Entreprise).Where(r => r.Vehicule.Site.Entreprise.Id == id)
+                .Include(r => r.Cle).ToListAsync())
             {
                 r.Add(new ReservationViewModel(reservation));
             }

@@ -23,10 +23,11 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Personnel
+        [Route("GetPersonnelsbyEntreprise/{id}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Personnel>>> GetPersonnel()
+        public async Task<ActionResult<IEnumerable<Personnel>>> GetPersonnelsbyEntreprise(Guid id)
         {
-            return await _context.Personnel.ToListAsync();
+            return await _context.Personnel.Include(p => p.Site).ThenInclude(p => p.Entreprise).Where(p => p.Site.Entreprise.Id == id).ToListAsync();
         }
 
         // GET: api/Personnel/5

@@ -23,12 +23,26 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Utilisateurs
+        // GET: api/Utilisateurs/GetUtilisateursbyEntreprise
+        [Route("GetUtilisateursbyEntreprise/{id}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateur()
+        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbyEntreprise(Guid id)
         {
             var u = new List<UtilisateurViewModel>();
-            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).ToListAsync())
+            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Entreprise.Id == id).ToListAsync())
+            {
+                u.Add(new UtilisateurViewModel(utilisateur));
+            }
+            return u;
+        }
+
+        // GET: api/Utilisateurs/GetUtilisateursbySite
+        [Route("GetUtilisateursbySite/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbySite(Guid id)
+        {
+            var u = new List<UtilisateurViewModel>();
+            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Id == id).ToListAsync())
             {
                 u.Add(new UtilisateurViewModel(utilisateur));
             }
