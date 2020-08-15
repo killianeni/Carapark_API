@@ -125,6 +125,9 @@ namespace KMAP_API.Migrations
                     b.Property<string>("SiteDestination")
                         .HasColumnType("text");
 
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("UtilisateurId")
                         .HasColumnType("uuid");
 

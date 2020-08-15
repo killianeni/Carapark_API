@@ -22,6 +22,8 @@ namespace KMAP_API.Models
 
         public string Description { get; set; }
 
+        public State State { get; set; }
+
         //Clé étrangère
         public Utilisateur Utilisateur { get; set; }
 
@@ -35,5 +37,18 @@ namespace KMAP_API.Models
         {
 
         }
+    }
+
+
+    public enum State
+    {
+        //En attente de validation
+        Waiting = 1,
+
+        //Validé
+        Valid = 2,
+
+        //Rejeté
+        Rejet = 3
     }
 }
