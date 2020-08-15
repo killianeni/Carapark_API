@@ -1,12 +1,12 @@
 -- Drop all
---DROP TABLE IF EXISTS public."Entreprise" CASCADE;
---DROP TABLE IF EXISTS public."Site" CASCADE;
---DROP TABLE IF EXISTS public."Vehicule" CASCADE;
---DROP TABLE IF EXISTS public."Cle" CASCADE;
---DROP TABLE IF EXISTS public."Role" CASCADE;
---DROP TABLE IF EXISTS public."Personnel" CASCADE;
---DROP TABLE IF EXISTS public."Reservation" CASCADE;
---DROP TABLE IF EXISTS public."Personnel_Reservations" CASCADE;
+DROP TABLE IF EXISTS public."Entreprise" CASCADE;
+DROP TABLE IF EXISTS public."Site" CASCADE;
+DROP TABLE IF EXISTS public."Vehicule" CASCADE;
+DROP TABLE IF EXISTS public."Cle" CASCADE;
+DROP TABLE IF EXISTS public."Role" CASCADE;
+DROP TABLE IF EXISTS public."Personnel" CASCADE;
+DROP TABLE IF EXISTS public."Reservation" CASCADE;
+DROP TABLE IF EXISTS public."Personnel_Reservations" CASCADE;
 
 ----------------------------------------------------------------------------------------------------------
 -- Create tables
@@ -135,6 +135,7 @@ CREATE TABLE public."Reservation"
     "UtilisateurId" uuid,
     "VehiculeId" uuid,
     "CleId" uuid,
+    "State" integer NOT NULL,
     CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
         REFERENCES public."Cle" ("Id") MATCH SIMPLE
@@ -289,22 +290,22 @@ INSERT INTO public."Role"("Id", "Libelle") VALUES ('4a3b872b-ae9f-4b04-89ca-ddbb
 
 -- Personnel
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('27a51826-0f74-42f0-b3a7-3f51246545e6', 'BON', 'Jean', 'jean.bon@eni.fr', 'pochetteSurprise1', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'utilisateur', '123456', 'a4828836-eff3-4151-b1b9-ab5d6a3cd3ca');
+	VALUES ('27a51826-0f74-42f0-b3a7-3f51246545e6', 'BON', 'Jean', 'jean.bon@eni.fr', 'pochetteSurprise1', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '123456', 'a4828836-eff3-4151-b1b9-ab5d6a3cd3ca');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', 'LAFOND', 'Michel', 'michel.lafond@eni.fr', 'pochetteSurprise2', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
+	VALUES ('dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', 'LAFOND', 'Michel', 'michel.lafond@eni.fr', 'pochetteSurprise2', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator")
-	VALUES ('62b473a0-91f0-4e6f-bea7-1953ac199157', 'ALAPLAGE', 'Martine', 'martine.alaplage@eni.fr', 'trotinette', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'personnel');
+	VALUES ('62b473a0-91f0-4e6f-bea7-1953ac199157', 'ALAPLAGE', 'Martine', 'martine.alaplage@eni.fr', 'trotinette', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Personnel');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('f39ebf9d-cb2e-40ff-8885-48bddbb829c9', 'MINET', 'Pierre', 'pierre.minet@eni.fr', 'pochetteSurprise3', '0d441381-e25a-4486-a910-ab3bedeb47ea', 'utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
+	VALUES ('f39ebf9d-cb2e-40ff-8885-48bddbb829c9', 'MINET', 'Pierre', 'pierre.minet@eni.fr', 'pochetteSurprise3', '0d441381-e25a-4486-a910-ab3bedeb47ea', 'Utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('5151123e-725b-447c-a11a-ac1728c0f595', 'admin', 'kmap', 'kmap.admin@kmap.fr', 'fusée', '9c60d56a-aef1-412f-a8c4-11d480432153', 'utilisateur', 'kmap_pass', '4a3b872b-ae9f-4b04-89ca-ddbb26e2dc25');
+	VALUES ('5151123e-725b-447c-a11a-ac1728c0f595', 'admin', 'kmap', 'kmap.admin@kmap.fr', 'fusée', '9c60d56a-aef1-412f-a8c4-11d480432153', 'Utilisateur', 'kmap_pass', '4a3b872b-ae9f-4b04-89ca-ddbb26e2dc25');
 
 -- Reservation
 
-INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId")
-	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/01/01 09:00:00', '2020/01/08 18:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755');
-INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId")
-	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/04/01 09:00:00', '2020/04/08 18:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf');
+INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "State")
+	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/01/01 09:00:00', '2020/01/08 18:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', 1);
+INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "State")
+	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/04/01 09:00:00', '2020/04/08 18:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', 2);
 
 -- Personnel_Reservation
 

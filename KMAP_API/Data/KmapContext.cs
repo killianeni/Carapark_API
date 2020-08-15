@@ -5,7 +5,13 @@ namespace KMAP_API.Data
 {
     public class KmapContext : DbContext
     {
-        public KmapContext(DbContextOptions options)
+
+        //Command
+        //Aller dans la console de Gestionnaire de pacakage
+        //Add-Migration nomdelamigration
+        //Update-Database
+
+        public KmapContext(DbContextOptions<KmapContext> options)
             : base(options)
         {
         }
