@@ -40,6 +40,23 @@ namespace KMAP_API.Controllers
             return r;
         }
 
+        // GET: api/Reservations/GetReservationsbyUser
+        [Route("GetReservationsbyUser/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsbyUser(Guid id)
+        {
+            var r = new List<ReservationViewModel>();
+            foreach (var reservation in await _context.Reservation
+                .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
+                .Include(r => r.Utilisateur).Where(u => u.Id == id)
+                .Include(r => r.Vehicule).ThenInclude(r => r.Site).ThenInclude(r => r.Entreprise)
+                .Include(r => r.Cle).ToListAsync())
+            {
+                r.Add(new ReservationViewModel(reservation));
+            }
+            return r;
+        }
+
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ReservationViewModel>> GetReservation(Guid id)
