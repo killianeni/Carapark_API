@@ -11,7 +11,7 @@ namespace KMAP_API.Data
         //Add-Migration nomdelamigration
         //Update-Database
 
-        public KmapContext(DbContextOptions options)
+        public KmapContext(DbContextOptions<KmapContext> options)
             : base(options)
         {
         }
