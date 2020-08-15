@@ -22,12 +22,12 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Vehicules
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehicule()
+        // GET: api/Vehicules/GetVehiculesBySite
+        [HttpGet("GetVehiculesBySite/{id}")]
+        public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesBySite(Guid id)
         {
             var v = new List<VehiculeViewModel>();
-            foreach (var vehicule in await _context.Vehicule.Include(v => v.Cles).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id).Include(v => v.Cles).ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
