@@ -13,8 +13,6 @@ namespace KMAP_API.Models
         public Guid Id { get; set; }
 
         public string Libelle { get; set; }
-
-        [JsonIgnore]
         public ICollection<Utilisateur> Utilisateurs { get; set; }
 
         public Role()

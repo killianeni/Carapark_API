@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KMAP_API.Models
 {
-    public class Cle
+    public class Destination
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,10 +15,7 @@ namespace KMAP_API.Models
 
         public string Libelle { get; set; }
 
-        [JsonIgnore]
-        public Vehicule Vehicule { get; set; }
-
-        public Cle()
+        public Destination()
         {
 
         }
