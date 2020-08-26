@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KMAP_API.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,18 +12,42 @@ namespace KMAP_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-
-        public string SiteDestination { get; set; }
-
-        public bool ConfirmationCle { get; set; }
-
         public DateTime DateDebut { get; set; }
 
         public DateTime DateFin { get; set; }
 
+        public string SiteDestination { get; set; }
+
         public string Description { get; set; }
 
-        public State State { get; set; }
+        public bool ConfirmationCle { get; set; } = false;
+
+        public bool IsRejeted { get; set; } = false;
+
+        public bool IsAccepted { get; set; } = false;
+
+        public State State
+        {
+            get
+            {
+                if (ConfirmationCle)
+                {
+                    return State.Close;
+                }
+                else if (IsRejeted)
+                {
+                    return State.Rejet;
+                }
+                else if (IsAccepted)
+                {
+                    return State.Valid;
+                }
+                else
+                {
+                    return State.Waiting;
+                }
+            }
+        }
 
         //Clé étrangère
         public Utilisateur Utilisateur { get; set; }
@@ -37,6 +62,32 @@ namespace KMAP_API.Models
         {
 
         }
+
+        public Reservation(ReservationViewModel rvm, Utilisateur u, Vehicule v, List<Personnel_Reservation> pr)
+        {
+            Id = rvm.Id;
+            var hDebut = (rvm.TimeStart == "AM") ? 9 : 15;
+            var hFin = (rvm.TimeEnd == "AM") ? 9 : 15;
+            DateDebut = new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0);
+            DateFin = new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0);
+            SiteDestination = rvm.SiteDestination;
+            Description = rvm.Description;
+            Utilisateur = u;
+            Vehicule = v;
+            Personnel_Reservations = pr;
+        }
+
+        public void Update(ReservationViewModel rvm, Vehicule v, List<Personnel_Reservation> pr) {
+            var hDebut = (rvm.TimeStart == "AM") ? 9 : 15;
+            var hFin = (rvm.TimeEnd == "AM") ? 9 : 15;
+            DateDebut = new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0);
+            DateFin = new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0);
+            SiteDestination = rvm.SiteDestination;
+            Description = rvm.Description;
+            Vehicule = v;
+            Personnel_Reservations = pr;
+        }
+
     }
 
 
@@ -49,6 +100,9 @@ namespace KMAP_API.Models
         Valid = 2,
 
         //Rejeté
-        Rejet = 3
+        Rejet = 3,
+
+        //Clôturé
+        Close = 4
     }
 }
