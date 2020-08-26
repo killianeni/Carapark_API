@@ -136,6 +136,8 @@ CREATE TABLE public."Reservation"
     "VehiculeId" uuid,
     "CleId" uuid,
     "State" integer NOT NULL,
+    "IsAccepted" boolean NOT NULL,
+    "IsRejeted" boolean NOT NULL,
     CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
         REFERENCES public."Cle" ("Id") MATCH SIMPLE

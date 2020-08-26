@@ -54,7 +54,13 @@ namespace KMAP_API.ViewModels
 
         public string Description { get; set; }
 
-        public string Status { get; set; }
+        public bool ConfirmationCle { get; set; } = false;
+
+        public bool IsRejeted { get; set; } = false;
+
+        public bool IsAccepted { get; set; } = false;
+
+        public int Status { get; set; }
 
         public ReservationViewModel(Reservation r)
         {
@@ -72,7 +78,11 @@ namespace KMAP_API.ViewModels
             
             SiteDestination = r.SiteDestination;
             Description = r.Description;
-            Status = r.State.ToString();
+
+            ConfirmationCle = r.ConfirmationCle;
+            IsAccepted = r.IsAccepted;
+            IsRejeted = r.IsRejeted;
+            Status = (int)r.State;
         }
     }
 }
