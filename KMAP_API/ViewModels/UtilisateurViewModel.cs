@@ -18,9 +18,9 @@ namespace KMAP_API.ViewModels
 
         public string Permis { get; set; }
 
-        public string NomRole { get; set; }
+        public RoleViewModel Role { get; set; }
 
-        public string NomSite { get; set; }
+        public SiteViewModel Site { get; set; }
 
         public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
 
@@ -32,8 +32,16 @@ namespace KMAP_API.ViewModels
             Prenom = u.Prenom;
             Mail = u.Mail;
             Permis = u.Permis;
-            NomRole = u.Role.Libelle;
-            NomSite = u.Site.Libelle;
+            Role = new RoleViewModel()
+            {
+                Id = u.Role.Id,
+                Libelle = u.Role.Libelle
+            };
+            Site = new SiteViewModel()
+            {
+                Id = u.Site.Id,
+                Libelle = u.Site.Libelle
+            };
             Personnel_Reservations = u.Personnel_Reservations;
         }
     }
