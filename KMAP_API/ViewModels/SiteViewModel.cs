@@ -24,6 +24,11 @@ namespace KMAP_API.ViewModels
 
         public ICollection<Reservation> Reservations { get; set; }
 
+        public SiteViewModel()
+        {
+
+        }
+
         public SiteViewModel(Site s)
         {
             Id = s.Id;
