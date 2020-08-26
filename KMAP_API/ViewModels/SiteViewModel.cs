@@ -10,7 +10,7 @@ namespace KMAP_API.ViewModels
 
         public string Libelle { get; set; }
 
-        public string Entreprise { get; set; }
+        public EntrepriseViewModel Entreprise { get; set; }
 
         public int NbUtilisateurs { get; set; }
 
@@ -33,7 +33,11 @@ namespace KMAP_API.ViewModels
         {
             Id = s.Id;
             Libelle = s.Libelle;
-            Entreprise = s.Entreprise.Libelle;
+            Entreprise = new EntrepriseViewModel()
+            {
+                Id = s.Entreprise.Id,
+                Libelle = s.Entreprise.Libelle
+            };
         }
     }
 }
