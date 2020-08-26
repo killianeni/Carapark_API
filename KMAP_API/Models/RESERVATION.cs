@@ -72,6 +72,9 @@ namespace KMAP_API.Models
             DateFin = new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0);
             SiteDestination = rvm.SiteDestination;
             Description = rvm.Description;
+            ConfirmationCle = rvm.ConfirmationCle;
+            IsAccepted = rvm.IsAccepted;
+            IsRejeted = rvm.IsRejeted;
             Utilisateur = u;
             Vehicule = v;
             Personnel_Reservations = pr;
@@ -84,6 +87,9 @@ namespace KMAP_API.Models
             DateFin = new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0);
             SiteDestination = rvm.SiteDestination;
             Description = rvm.Description;
+            ConfirmationCle = rvm.ConfirmationCle;
+            IsAccepted = rvm.IsAccepted;
+            IsRejeted = rvm.IsRejeted;
             Vehicule = v;
             Personnel_Reservations = pr;
         }
