@@ -59,6 +59,8 @@ namespace KMAP_API.ViewModels
         public bool IsRejeted { get; set; } = false;
 
         public bool IsAccepted { get; set; } = false;
+        
+        public string Commentaire { get; set; }
 
         public int Status { get; set; }
 
@@ -82,6 +84,7 @@ namespace KMAP_API.ViewModels
             ConfirmationCle = r.ConfirmationCle;
             IsAccepted = r.IsAccepted;
             IsRejeted = r.IsRejeted;
+            Commentaire = r.Commentaire;
             Status = (int)r.State;
         }
     }

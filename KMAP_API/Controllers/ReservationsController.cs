@@ -23,10 +23,10 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
-        // GET: api/Reservations/GetReservationsbySite
-        [Route("GetReservationsbySite/{idSite}")]
+        // GET: api/Reservations/GetReservationsBySite
+        [Route("GetReservationsBySite/{idSite}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsbySite(Guid idSite)
+        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsBySite(Guid idSite)
         {
             var r = new List<ReservationViewModel>();
             foreach (var reservation in await _context.Reservation
@@ -40,10 +40,11 @@ namespace KMAP_API.Controllers
             return r;
         }
 
-        // GET: api/Reservations/GetReservationsbySiteAndDate
-        [Route("GetReservationsbySiteAndDate/{idSite}/{date}")]
+        // GET: api/Reservations/GetReservationsBySiteAndDate
+        /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
+        [Route("GetReservationsBySiteAndDate/{idSite}/{date}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsbySiteAndDate(Guid idSite, string date)
+        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsBySiteAndDate(Guid idSite, string date)
         {
             var r = new List<ReservationViewModel>();
             var annee = date.Split('-')[1];
@@ -61,14 +62,14 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Reservations/GetReservationsbyUser
-        [Route("GetReservationsbyUser/{idUser}")]
+        [Route("GetReservationsByUser/{idUser}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsbyUser(Guid idUser)
+        public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsByUser(Guid idUser)
         {
             var r = new List<ReservationViewModel>();
             foreach (var reservation in await _context.Reservation
                 .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
-                .Include(r => r.Utilisateur).ThenInclude(u => u.Role).Where(u => u.Id == idUser)
+                .Include(r => r.Utilisateur).ThenInclude(u => u.Role).Where(u => u.Utilisateur.Id == idUser)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise)
                 .Include(r => r.Cle).ToListAsync())
             {

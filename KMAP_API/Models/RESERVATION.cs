@@ -49,6 +49,8 @@ namespace KMAP_API.Models
             }
         }
 
+        public string Commentaire { get; set; }
+
         //Clé étrangère
         public Utilisateur Utilisateur { get; set; }
 
@@ -75,6 +77,7 @@ namespace KMAP_API.Models
             ConfirmationCle = rvm.ConfirmationCle;
             IsAccepted = rvm.IsAccepted;
             IsRejeted = rvm.IsRejeted;
+            Commentaire = rvm.Commentaire;
             Utilisateur = u;
             Vehicule = v;
             Personnel_Reservations = pr;
@@ -90,6 +93,7 @@ namespace KMAP_API.Models
             ConfirmationCle = rvm.ConfirmationCle;
             IsAccepted = rvm.IsAccepted;
             IsRejeted = rvm.IsRejeted;
+            Commentaire = rvm.Commentaire;
             Vehicule = v;
             Personnel_Reservations = pr;
         }
