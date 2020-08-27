@@ -7,7 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Npgsql;
+using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace KMAP_API
@@ -63,27 +67,19 @@ namespace KMAP_API
 
             services.AddDbContext<KmapContext>(options => options.UseNpgsql(builder.ConnectionString));
 
-            // Register the Swagger services
-            services.AddSwaggerDocument(config =>
+            services.AddSwaggerGen(c =>
             {
-                config.PostProcess = document =>
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    document.Info.Version = "v1";
-                    document.Info.Title = Configuration["Swagger:Info:Title"];
-                    document.Info.Description = "A simple ASP.NET Core web API";
-                    /*document.Info.TermsOfService = "None";
-                    document.Info.Contact = new NSwag.OpenApiContact
-                    {
-                        Name = "",
-                        Email = string.Empty,
-                        Url = "https://twitter.com/spboyer"
-                    };
-                    document.Info.License = new NSwag.OpenApiLicense
-                    {
-                        Name = "Use under LICX",
-                        Url = "https://example.com/license"
-                    };*/
-                };
+                    Title = "KMAP API",
+                    Version = "v1",
+                    Description = "Project KMAP API."
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -110,9 +106,14 @@ namespace KMAP_API
                 endpoints.MapControllers();
             });
 
-            // Register the Swagger generator and the Swagger UI middlewares
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "KMAP API V1");
+                c.RoutePrefix = "swagger";
+            });
+
         }
     }
 }

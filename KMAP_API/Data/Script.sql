@@ -135,9 +135,9 @@ CREATE TABLE public."Reservation"
     "UtilisateurId" uuid,
     "VehiculeId" uuid,
     "CleId" uuid,
-    "State" integer NOT NULL,
     "IsAccepted" boolean NOT NULL,
     "IsRejeted" boolean NOT NULL,
+    "Commentaire" text COLLATE pg_catalog."default",
     CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
         REFERENCES public."Cle" ("Id") MATCH SIMPLE
@@ -304,10 +304,10 @@ INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId
 
 -- Reservation
 
+INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted", "Commentaire")
+	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/01/01 09:00:00', '2020/01/08 18:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', false, false, 'Changer date');
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/01/01 09:00:00', '2020/01/08 18:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', fasle, false);
-INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/04/01 09:00:00', '2020/04/08 18:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, fasle);
+	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/04/01 09:00:00', '2020/04/08 18:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, false);
 
 -- Personnel_Reservation
 
