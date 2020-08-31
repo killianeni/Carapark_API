@@ -53,6 +53,14 @@ namespace KMAP_API.Controllers
         }
 
 
+
+        // GET: api/Vehicules/CountVehiculeActifBySite
+        [HttpGet("CountVehiculeActifBySite/{id}")]
+        public int CountVehiculeActifBySite(Guid id)
+        {
+            return _context.Vehicule.Where(v => v.Site.Id == id && v.Actif == true).Count();
+        }
+
         // GET: api/Vehicules/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VehiculeViewModel>> GetVehicule(Guid id)
