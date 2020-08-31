@@ -34,6 +34,26 @@ namespace KMAP_API.Controllers
         }
 
 
+        // GET: api/Vehicules/GetVehiculeNonResaBySiteAndDate
+        [HttpGet("GetVehiculeNonResaBySiteAndDate/{id}/{dateDebut}/{dateFin}")]
+        public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculeNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
+        {
+            var v = new List<VehiculeViewModel>();
+            var listeVehiculeReserve = ListeVehiculeReserve(dateDebut, dateFin);
+            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id)).Include(v => v.Cles).ToListAsync())
+            {
+                v.Add(new VehiculeViewModel(vehicule));
+            }
+            return v;
+        }
+
+        private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
+        {
+            return _context.Reservation.Where(r => (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
+        }
+
+
+
         // GET: api/Vehicules/CountVehiculeActifBySite
         [HttpGet("CountVehiculeActifBySite/{id}")]
         public int CountVehiculeActifBySite(Guid id)
