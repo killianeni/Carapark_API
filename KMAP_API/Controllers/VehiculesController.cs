@@ -35,8 +35,6 @@ namespace KMAP_API.Controllers
 
 
         // GET: api/Vehicules/GetVehiculeNonResaBySiteAndDate
-        /// <param name="dateDebut"> mm-aaaa (si 01 -> 1 ) </param>
-        /// <param name="dateFin"> mm-aaaa (si 01 -> 1 ) </param>
         [HttpGet("GetVehiculeNonResaBySiteAndDate/{id}/{dateDebut}/{dateFin}")]
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculeNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
         {
