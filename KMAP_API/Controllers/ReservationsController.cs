@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
