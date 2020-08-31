@@ -1,13 +1,12 @@
-﻿using System;
+﻿using KMAP_API.Data;
+using KMAP_API.Models;
+using KMAP_API.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KMAP_API.Data;
-using KMAP_API.Models;
-using KMAP_API.ViewModels;
 
 namespace KMAP_API.Controllers
 {
@@ -32,6 +31,14 @@ namespace KMAP_API.Controllers
                 v.Add(new VehiculeViewModel(vehicule));
             }
             return v;
+        }
+
+
+        // GET: api/Vehicules/CountVehiculeActifBySite
+        [HttpGet("CountVehiculeActifBySite/{id}")]
+        public int CountVehiculeActifBySite(Guid id)
+        {
+            return _context.Vehicule.Where(v => v.Site.Id == id && v.Actif == true).Count();
         }
 
         // GET: api/Vehicules/5
