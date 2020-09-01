@@ -1,8 +1,5 @@
 ﻿using KMAP_API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.ViewModels
 {
@@ -16,12 +13,15 @@ namespace KMAP_API.ViewModels
 
         public string Mail { get; set; }
 
+        public string Permis { get; set; }
+
         public PersonnelViewModel(Personnel p)
         {
             Id = p.Id;
             Nom = p.Nom;
             Prenom = p.Prenom;
             Mail = p.Mail;
+            Permis = p.Permis;
         }
     }
 }
