@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "super-admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user")]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonnelController : ControllerBase
