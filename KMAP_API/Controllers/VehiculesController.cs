@@ -49,7 +49,7 @@ namespace KMAP_API.Controllers
 
         private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
         {
-            return _context.Reservation.Where(r => (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
+            return _context.Reservation.Where(r => (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
         }
 
 
