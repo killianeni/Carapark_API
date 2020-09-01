@@ -145,7 +145,7 @@ namespace KMAP_API.Controllers
             Utilisateur u = _context.Utilisateur.Where(u => u.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
             Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
             List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
-            foreach (var p  in reservationVM.Personnels)
+            foreach (var p in reservationVM.Personnels)
             {
                 pr.Add(new Personnel_Reservation()
                 {
@@ -177,9 +177,47 @@ namespace KMAP_API.Controllers
             return reservation;
         }
 
+        // GET: api/Reservations/GetFullReservedDays
+        /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
+        [Route("GetFullReservedDays/{idSite}/{date}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DateTime>>> GetFullReservedDays(Guid idSite, string date)
+        {
+            var fullDays = new HashSet<DateTime>();
+            var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
+
+            var listResa = await GetReservationsBySiteAndDate(idSite, date);
+            var year = Int32.Parse(date.Split('-')[1]);
+            var month = Int32.Parse(date.Split('-')[0]);
+            var dateT = new DateTime(year, month, 1, 9, 0, 0);
+
+            for (int i = 0; i < 31; i++)
+            {
+                if (listResa.Value.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDays.Add(dateT);
+                }
+                dateT = dateT.AddHours(6);
+                if (listResa.Value.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDays.Add(dateT);
+                }
+                dateT = dateT.AddHours(18);
+            }
+
+            return fullDays;
+        }
+
+
+        #region Function private
+
+        //Get true if reservation exist
         private bool ReservationExists(Guid id)
         {
             return _context.Reservation.Any(e => e.Id == id);
         }
+
+
+        #endregion
     }
 }
