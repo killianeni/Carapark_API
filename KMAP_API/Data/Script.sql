@@ -256,9 +256,9 @@ INSERT INTO public."Site"("Id", "Libelle", "EntrepriseId")
 
 -- Vehicule
 INSERT INTO public."Vehicule"("Id", "NumImmat", "Modele", "NbPlaces", "NbPortes", "TypeCarbu", "Actif", "SiteId")
-	VALUES ('49a46fa6-007f-42cd-9319-23eb0c012c14', '111-AAA-111', 'Clio', 5, 5, 'Essence', true, '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423');
+	VALUES ('49a46fa6-007f-42cd-9319-23eb0c012c14', '111-AAA-111', '206', 3, 2, 'Essence', true, '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423');
 INSERT INTO public."Vehicule"("Id", "NumImmat", "Modele", "NbPlaces", "NbPortes", "TypeCarbu", "Actif", "SiteId")
-	VALUES ('1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '222-BBB-444', 'Clio', 5, 5, 'Essence', true, '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423');
+	VALUES ('1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '222-BBB-444', '207', 5, 5, 'Essence', true, '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423');
 INSERT INTO public."Vehicule"("Id", "NumImmat", "Modele", "NbPlaces", "NbPortes", "TypeCarbu", "Actif", "SiteId")
 	VALUES ('dc7c75a3-a476-4dd7-a1eb-d1d46b0801c6', '333-CCC-444', 'Clio', 5, 5, 'Essence', false, '0d441381-e25a-4486-a910-ab3bedeb47ea');
 INSERT INTO public."Vehicule"("Id", "NumImmat", "Modele", "NbPlaces", "NbPortes", "TypeCarbu", "Actif", "SiteId")
@@ -305,13 +305,13 @@ INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId
 -- Reservation
 
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted", "Commentaire")
-	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/01/01 09:00:00', '2020/01/08 15:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', false, false, 'Changer date');
+	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/09/01 09:00:00', '2020/09/05 15:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', false, false, 'Changer date');
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/04/01 15:00:00', '2020/04/08 15:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, false);
+	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/09/04 15:00:00', '2020/09/08 15:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, false);
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('d4ae6c6e-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/06/01 09:00:00', '2020/06/08 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, false);
+	VALUES ('d4ae6c6e-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 09:00:00', '2020/09/10 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, false);
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('e456d584-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/08/01 15:00:00', '2020/08/08 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, true);
+	VALUES ('e456d584-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 15:00:00', '2020/09/15 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, true);
 
 -- Personnel_Reservation
 
