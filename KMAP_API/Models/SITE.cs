@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KMAP_API.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,6 +23,12 @@ namespace KMAP_API.Models
         public Site()
         {
 
+        }
+
+        public void Update(SiteViewModel svm, Entreprise e)
+        {
+            Libelle = svm.Libelle;
+            Entreprise = e;
         }
     }
 }
