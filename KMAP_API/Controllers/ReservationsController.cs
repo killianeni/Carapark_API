@@ -186,19 +186,19 @@ namespace KMAP_API.Controllers
             var fullDays = new HashSet<DateTime>();
             var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
 
-            var listResa = await GetReservationsBySiteAndDate(idSite, date);
+            var listResa = (await GetReservationsBySiteAndDate(idSite, date)).Value.Where(r => (State)r.Status != State.Rejet);
             var year = Int32.Parse(date.Split('-')[1]);
             var month = Int32.Parse(date.Split('-')[0]);
             var dateT = new DateTime(year, month, 1, 9, 0, 0);
 
             for (int i = 0; i < 31; i++)
             {
-                if (listResa.Value.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
                     fullDays.Add(dateT);
                 }
                 dateT = dateT.AddHours(6);
-                if (listResa.Value.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
                     fullDays.Add(dateT);
                 }
