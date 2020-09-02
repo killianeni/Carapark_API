@@ -20,7 +20,7 @@ namespace KMAP_API.ViewModels
 
         public bool Actif { get; set; }
 
-        public ICollection<Cle> Cles { get; set; }
+        public ICollection<CleViewModel> Cles { get; set; } = new List<CleViewModel>();
 
         public VehiculeViewModel()
         {
@@ -36,7 +36,10 @@ namespace KMAP_API.ViewModels
             NbPortes = v.NbPortes;
             TypeCarbu = v.TypeCarbu;
             Actif = v.Actif;
-            Cles = v.Cles;
+            foreach (var cle in v.Cles)
+            {
+                Cles.Add(new CleViewModel(cle));
+            }
         }
     }
 }
