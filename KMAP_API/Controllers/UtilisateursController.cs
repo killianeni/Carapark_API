@@ -92,7 +92,7 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Utilisateurs
@@ -104,7 +104,7 @@ namespace KMAP_API.Controllers
             _context.Utilisateur.Add(utilisateur);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUtilisateur", new { id = utilisateur.Id }, utilisateur);
+            return Ok();
         }
 
         // DELETE: api/Utilisateurs/5
@@ -120,12 +120,16 @@ namespace KMAP_API.Controllers
             _context.Utilisateur.Remove(utilisateur);
             await _context.SaveChangesAsync();
 
-            return utilisateur;
+            return Ok();
         }
+
+        #region private function
 
         private bool UtilisateurExists(Guid id)
         {
             return _context.Utilisateur.Any(e => e.Id == id);
         }
+
+        #endregion
     }
 }

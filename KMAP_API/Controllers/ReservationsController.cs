@@ -133,7 +133,7 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Reservations
@@ -158,7 +158,7 @@ namespace KMAP_API.Controllers
             _context.Reservation.Add(reservation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
+            return Ok();
         }
 
         // DELETE: api/Reservations/5
@@ -174,7 +174,7 @@ namespace KMAP_API.Controllers
             _context.Reservation.Remove(reservation);
             await _context.SaveChangesAsync();
 
-            return reservation;
+            return Ok();
         }
 
         // GET: api/Reservations/GetFullReservedDays

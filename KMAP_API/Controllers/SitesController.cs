@@ -88,8 +88,15 @@ namespace KMAP_API.Controllers
             }
 
             var site = _context.Site.FirstOrDefault(s => s.Id == id);
-            var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
-            site.Update(siteVM, e);
+            if (siteVM.Entreprise.Id != null)
+            {
+                var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
+                site.Update(siteVM, e);
+            }
+            else
+            {
+                site.Update(siteVM);
+            }
 
             _context.Entry(site).State = EntityState.Modified;
 
@@ -147,9 +154,13 @@ namespace KMAP_API.Controllers
             return Ok();
         }
 
+        #region private function
+
         private bool SiteExists(Guid id)
         {
             return _context.Site.Any(e => e.Id == id);
         }
+
+        #endregion
     }
 }

@@ -83,7 +83,7 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Personnel
@@ -103,10 +103,7 @@ namespace KMAP_API.Controllers
             _context.Personnel.Add(personnel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPersonnel", new
-            {
-                id = personnel.Id
-            }, personnel);
+            return Ok();
         }
 
         // DELETE: api/Personnel/5
@@ -125,9 +122,13 @@ namespace KMAP_API.Controllers
             return personnel;
         }
 
+        #region private function
+
         private bool PersonnelExists(Guid id)
         {
             return _context.Personnel.Any(e => e.Id == id);
         }
+
+        #endregion
     }
 }
