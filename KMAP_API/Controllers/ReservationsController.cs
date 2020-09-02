@@ -32,6 +32,7 @@ namespace KMAP_API.Controllers
             foreach (var reservation in await _context.Reservation
                 .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
                 .Include(r => r.Utilisateur).ThenInclude(u => u.Role)
+                .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise).Where(r => r.Vehicule.Site.Id == idSite)
                 .Include(r => r.Cle).ToListAsync())
             {
