@@ -25,10 +25,13 @@ namespace KMAP_API.Models
 
         }
 
-        public void Update(SiteViewModel svm, Entreprise e)
+        public void Update(SiteViewModel svm, Entreprise e = null)
         {
             Libelle = svm.Libelle;
-            Entreprise = e;
+            if (e != null)
+            {
+                Entreprise = e;
+            }
         }
     }
 }

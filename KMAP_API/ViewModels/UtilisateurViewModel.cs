@@ -24,6 +24,11 @@ namespace KMAP_API.ViewModels
 
         public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
 
+        public UtilisateurViewModel()
+        {
+
+        }
+
         public UtilisateurViewModel(Utilisateur u)
         {
             Id = u.Id;

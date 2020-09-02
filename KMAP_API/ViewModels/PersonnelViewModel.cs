@@ -15,6 +15,11 @@ namespace KMAP_API.ViewModels
 
         public string Permis { get; set; }
 
+        public PersonnelViewModel()
+        {
+
+        }
+
         public PersonnelViewModel(Personnel p)
         {
             Id = p.Id;

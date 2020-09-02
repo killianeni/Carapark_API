@@ -1,8 +1,6 @@
 ﻿using KMAP_API.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.ViewModels
 {
@@ -23,6 +21,11 @@ namespace KMAP_API.ViewModels
         public bool Actif { get; set; }
 
         public ICollection<Cle> Cles { get; set; }
+
+        public VehiculeViewModel()
+        {
+
+        }
 
         public VehiculeViewModel(Vehicule v)
         {

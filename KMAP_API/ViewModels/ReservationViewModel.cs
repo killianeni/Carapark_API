@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.ViewModels
 {
@@ -12,9 +11,11 @@ namespace KMAP_API.ViewModels
 
         public DateTime DateDebut { get; set; }
 
-        public string TimeStart { get
+        public string TimeStart
+        {
+            get
             {
-                if (DateDebut.Hour < 13 )
+                if (DateDebut.Hour < 13)
                 {
                     return "AM";
                 }
@@ -22,7 +23,7 @@ namespace KMAP_API.ViewModels
                 {
                     return "PM";
                 }
-            } 
+            }
         }
 
         public DateTime DateFin { get; set; }
@@ -59,10 +60,15 @@ namespace KMAP_API.ViewModels
         public bool IsRejeted { get; set; } = false;
 
         public bool IsAccepted { get; set; } = false;
-        
+
         public string Commentaire { get; set; }
 
         public int Status { get; set; }
+
+        public ReservationViewModel()
+        {
+
+        }
 
         public ReservationViewModel(Reservation r)
         {
@@ -77,7 +83,7 @@ namespace KMAP_API.ViewModels
             {
                 Personnels.Add(new PersonnelViewModel(personnel));
             }
-            
+
             SiteDestination = r.SiteDestination;
             Description = r.Description;
 
