@@ -24,9 +24,9 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Sites/idEntreprise
-        [Route("GetSitebyEntreprise/{id}/{typePage}")]
+        [Route("GetSitesByEntreprise/{id}/{typePage}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SiteViewModel>>> GetSitebyEntreprise(Guid id, string typePage)
+        public async Task<ActionResult<IEnumerable<SiteViewModel>>> GetSitesByEntreprise(Guid id, string typePage)
         {
             var sites = new List<SiteViewModel>();
 
@@ -71,55 +71,33 @@ namespace KMAP_API.Controllers
             return sites;
         }
 
-        // GET: api/Sites/idSite/typePage
-        //[HttpGet("{id}/{typePage}")]
-        //public async Task<ActionResult<SiteViewModel>> GetSite(Guid id, string typePage)
-        //{
-        //    var s = await _context.Site.Include(s => s.Entreprise).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).Include(u => u.Vehicules).FirstOrDefaultAsync(s => s.Id == id);
-
-        //    if (s != null)
-        //    {
-        //        var site = new SiteViewModel(s);
-
-        //        switch (typePage)
-        //        {
-        //            case "utilisateur":
-        //                site.Utilisateurs = s.Personnels;
-        //                break;
-        //            case "reservation":
-        //                var resa = new List<Reservation>();
-        //                if (typePage == "reservation")
-        //                {
-        //                    foreach (var v in s.Vehicules)
-        //                    {
-        //                        foreach (var r in v.Reservations)
-        //                        {
-        //                            resa.Add(r);
-        //                        }
-        //                    }
-        //                }
-        //                site.Reservations = resa;
-        //                break;
-        //            case "vehicule":
-        //                site.Vehicules = s.Vehicules;
-        //                break;
-        //        }
-
-        //        return site;
-        //    }
-
-        //    return NotFound();
-        //}
+        // GET: api/Sites/5
+        [HttpGet("id")]
+        public async Task<ActionResult<SiteViewModel>> GetSite(Guid id)
+        {
+            return new SiteViewModel(await _context.Site.Where(s => s.Id == id).Include(s => s.Entreprise).FirstOrDefaultAsync());
+        }
 
         // PUT: api/Sites/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSite(Guid id, Site site)
+        public async Task<IActionResult> PutSite(Guid id, SiteViewModel siteVM)
         {
-            if (id != site.Id)
+            if (id != siteVM.Id)
             {
                 return BadRequest();
+            }
+
+            var site = _context.Site.FirstOrDefault(s => s.Id == id);
+            if (siteVM.Entreprise.Id != null)
+            {
+                var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
+                site.Update(siteVM, e);
+            }
+            else
+            {
+                site.Update(siteVM);
             }
 
             _context.Entry(site).State = EntityState.Modified;
@@ -140,19 +118,26 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Sites
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Site>> PostSite(Site site)
+        public async Task<ActionResult<Site>> PostSite(SiteViewModel siteVM)
         {
+            var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
+            var site = new Site()
+            {
+                Libelle = siteVM.Libelle,
+                Entreprise = e
+            };
+
             _context.Site.Add(site);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSite", new { id = site.Id }, site);
+            return Ok();
         }
 
         // DELETE: api/Sites/5
@@ -168,12 +153,16 @@ namespace KMAP_API.Controllers
             _context.Site.Remove(site);
             await _context.SaveChangesAsync();
 
-            return site;
+            return Ok();
         }
+
+        #region private function
 
         private bool SiteExists(Guid id)
         {
             return _context.Site.Any(e => e.Id == id);
         }
+
+        #endregion
     }
 }

@@ -32,6 +32,7 @@ namespace KMAP_API.Controllers
             foreach (var reservation in await _context.Reservation
                 .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
                 .Include(r => r.Utilisateur).ThenInclude(u => u.Role)
+                .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise).Where(r => r.Vehicule.Site.Id == idSite)
                 .Include(r => r.Cle).ToListAsync())
             {
@@ -133,7 +134,7 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Reservations
@@ -158,7 +159,7 @@ namespace KMAP_API.Controllers
             _context.Reservation.Add(reservation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
+            return Ok();
         }
 
         // DELETE: api/Reservations/5
@@ -174,12 +175,50 @@ namespace KMAP_API.Controllers
             _context.Reservation.Remove(reservation);
             await _context.SaveChangesAsync();
 
-            return reservation;
+            return Ok();
         }
 
+        // GET: api/Reservations/GetFullReservedDays
+        /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
+        [Route("GetFullReservedDays/{idSite}/{date}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DateTime>>> GetFullReservedDays(Guid idSite, string date)
+        {
+            var fullDays = new HashSet<DateTime>();
+            var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
+
+            var listResa = (await GetReservationsBySiteAndDate(idSite, date)).Value.Where(r => (State)r.Status != State.Rejet);
+            var year = Int32.Parse(date.Split('-')[1]);
+            var month = Int32.Parse(date.Split('-')[0]);
+            var dateT = new DateTime(year, month, 1, 9, 0, 0);
+
+            for (int i = 0; i < 31; i++)
+            {
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDays.Add(dateT);
+                }
+                dateT = dateT.AddHours(6);
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDays.Add(dateT);
+                }
+                dateT = dateT.AddHours(18);
+            }
+
+            return fullDays;
+        }
+
+
+        #region Function private
+
+        //Get true if reservation exist
         private bool ReservationExists(Guid id)
         {
             return _context.Reservation.Any(e => e.Id == id);
         }
+
+
+        #endregion
     }
 }

@@ -1,8 +1,5 @@
 ﻿using KMAP_API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.ViewModels
 {
@@ -11,6 +8,11 @@ namespace KMAP_API.ViewModels
         public Guid Id { get; set; }
 
         public string Libelle { get; set; }
+
+        public CleViewModel()
+        {
+
+        }
 
         public CleViewModel(Cle c)
         {

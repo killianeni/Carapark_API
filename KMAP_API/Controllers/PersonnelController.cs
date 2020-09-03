@@ -1,5 +1,6 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
+using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,19 +26,25 @@ namespace KMAP_API.Controllers
 
         // GET: api/Personnel
         [Authorize(Roles = "user")]
-        [Route("GetPersonnelsbyEntreprise/{id}")]
+        [Route("GetPersonnelsBySite/{idSite}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Personnel>>> GetPersonnelsbyEntreprise(Guid id)
+        public async Task<ActionResult<IEnumerable<PersonnelViewModel>>> GetPersonnelsBySite(Guid idSite)
         {
-            return await _context.Personnel.Include(p => p.Site).ThenInclude(p => p.Entreprise).Where(p => p.Site.Entreprise.Id == id).ToListAsync();
+            var listP = new List<PersonnelViewModel>();
+            foreach (var personnel in await _context.Personnel.Include(p => p.Site).ThenInclude(p => p.Entreprise).Where(p => p.Site.Id == idSite).ToListAsync())
+            {
+                listP.Add(new PersonnelViewModel(personnel));
+            }
+
+            return listP;
         }
 
         [Authorize(Roles = "user")]
         // GET: api/Personnel/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Personnel>> GetPersonnel(Guid id)
+        public async Task<ActionResult<PersonnelViewModel>> GetPersonnel(Guid id)
         {
-            var personnel = await _context.Personnel.FindAsync(id);
+            var personnel = new PersonnelViewModel(await _context.Personnel.FindAsync(id));
 
             if (personnel == null)
             {
@@ -51,12 +58,15 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersonnel(Guid id, Personnel personnel)
+        public async Task<IActionResult> PutPersonnel(Guid id, PersonnelViewModel personnelVM)
         {
-            if (id != personnel.Id)
+            if (id != personnelVM.Id)
             {
                 return BadRequest();
             }
+
+            var personnel = _context.Personnel.Where(r => r.Id == id).FirstOrDefault();
+            personnel.Update(personnelVM);
 
             _context.Entry(personnel).State = EntityState.Modified;
 
@@ -76,19 +86,27 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Personnel
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Personnel>> PostPersonnel(Personnel personnel)
+        public async Task<ActionResult<Personnel>> PostPersonnel(PersonnelViewModel personnelVM)
         {
+            var personnel = new Personnel()
+            {
+                Nom = personnelVM.Nom,
+                Prenom = personnelVM.Prenom,
+                Mail = personnelVM.Mail,
+                Permis = personnelVM.Permis
+            };
+
             _context.Personnel.Add(personnel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPersonnel", new { id = personnel.Id }, personnel);
+            return Ok();
         }
 
         // DELETE: api/Personnel/5
@@ -107,9 +125,13 @@ namespace KMAP_API.Controllers
             return personnel;
         }
 
+        #region private function
+
         private bool PersonnelExists(Guid id)
         {
             return _context.Personnel.Any(e => e.Id == id);
         }
+
+        #endregion
     }
 }

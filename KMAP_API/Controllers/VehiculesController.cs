@@ -101,7 +101,7 @@ namespace KMAP_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Vehicules
@@ -113,7 +113,7 @@ namespace KMAP_API.Controllers
             _context.Vehicule.Add(vehicule);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVehicule", new { id = vehicule.Id }, vehicule);
+            return Ok();
         }
 
         // DELETE: api/Vehicules/5
@@ -129,7 +129,7 @@ namespace KMAP_API.Controllers
             _context.Vehicule.Remove(vehicule);
             await _context.SaveChangesAsync();
 
-            return vehicule;
+            return Ok();
         }
 
         #region private function
