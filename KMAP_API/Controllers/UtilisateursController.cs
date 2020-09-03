@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UtilisateursController : ControllerBase
@@ -50,6 +50,7 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Utilisateurs/5
+        [Authorize(Roles = "user")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UtilisateurViewModel>> GetUtilisateur(Guid id)
         {
@@ -66,6 +67,7 @@ namespace KMAP_API.Controllers
         // PUT: api/Utilisateurs/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "user")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUtilisateur(Guid id, Utilisateur utilisateur)
         {

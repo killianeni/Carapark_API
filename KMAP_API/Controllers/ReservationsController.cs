@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
@@ -145,7 +145,7 @@ namespace KMAP_API.Controllers
             Utilisateur u = _context.Utilisateur.Where(u => u.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
             Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
             List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
-            foreach (var p  in reservationVM.Personnels)
+            foreach (var p in reservationVM.Personnels)
             {
                 pr.Add(new Personnel_Reservation()
                 {

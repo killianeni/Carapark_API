@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "super-admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -22,7 +22,9 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
+
         // GET: api/Personnel
+        [Authorize(Roles = "user")]
         [Route("GetPersonnelsbyEntreprise/{id}")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Personnel>>> GetPersonnelsbyEntreprise(Guid id)
@@ -30,6 +32,7 @@ namespace KMAP_API.Controllers
             return await _context.Personnel.Include(p => p.Site).ThenInclude(p => p.Entreprise).Where(p => p.Site.Entreprise.Id == id).ToListAsync();
         }
 
+        [Authorize(Roles = "user")]
         // GET: api/Personnel/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Personnel>> GetPersonnel(Guid id)
