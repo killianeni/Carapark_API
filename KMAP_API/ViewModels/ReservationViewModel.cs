@@ -94,4 +94,18 @@ namespace KMAP_API.ViewModels
             Status = (int)r.State;
         }
     }
+
+    public class FullDay
+    {
+        public DateTime Date { get; set; }
+
+        public bool AM { get; set; }
+
+        public bool PM { get; set; }
+
+        public FullDay()
+        {
+
+        }
+    }
 }

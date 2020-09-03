@@ -182,9 +182,9 @@ namespace KMAP_API.Controllers
         /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
         [Route("GetFullReservedDays/{idSite}/{date}")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DateTime>>> GetFullReservedDays(Guid idSite, string date)
+        public async Task<ActionResult<IEnumerable<FullDay>>> GetFullReservedDays(Guid idSite, string date)
         {
-            var fullDays = new HashSet<DateTime>();
+            var fullDays = new List<FullDay>();
             var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
 
             var listResa = (await GetReservationsBySiteAndDate(idSite, date)).Value.Where(r => (State)r.Status != State.Rejet);
@@ -196,12 +196,12 @@ namespace KMAP_API.Controllers
             {
                 if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
-                    fullDays.Add(dateT);
+                    fullDays.Add(new FullDay() { Date = dateT, AM = true });
                 }
                 dateT = dateT.AddHours(6);
                 if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
-                    fullDays.Add(dateT);
+                    fullDays.Add(new FullDay() { Date = dateT, PM = true });
                 }
                 dateT = dateT.AddHours(18);
             }
