@@ -104,12 +104,18 @@ namespace KMAP_API.Controllers
                 return BadRequest();
             }
 
-            var reservation = _context.Reservation.Where(r => r.Id == reservationVM.Id).FirstOrDefault();
+            var reservation = _context.Reservation.FirstOrDefault(r => r.Id == reservationVM.Id);
 
             if (reservationVM.Vehicule != null && reservationVM.Vehicule.Id != null)
             {
-                var vehicule = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
+                var vehicule = _context.Vehicule.FirstOrDefault(v => v.Id == reservationVM.Vehicule.Id);
                 reservation.Vehicule = vehicule;
+            }
+
+            if (reservationVM.Cle != null && reservationVM.Cle.Id != null)
+            {
+                var cle = _context.Cle.FirstOrDefault(c => c.Id == reservationVM.Cle.Id);
+                reservation.Cle = cle;
             }
 
             if (reservationVM.Personnels != null)

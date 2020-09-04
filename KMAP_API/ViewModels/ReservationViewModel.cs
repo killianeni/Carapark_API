@@ -77,7 +77,10 @@ namespace KMAP_API.ViewModels
             DateFin = r.DateFin;
             Utilisateur = new UtilisateurViewModel(r.Utilisateur);
             Vehicule = new VehiculeViewModel(r.Vehicule);
-            Cle = new CleViewModel(r.Cle);
+            if (r.Cle != null)
+            {
+                Cle = new CleViewModel(r.Cle);
+            }
 
             foreach (var personnel in r.Personnel_Reservations.Select(pr => pr.Personnel))
             {
