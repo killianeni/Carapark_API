@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user,admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
@@ -99,22 +99,34 @@ namespace KMAP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(Guid id, ReservationViewModel reservationVM)
         {
-            if (id != reservationVM.Id)
+            if (!_context.Reservation.Any(r => r.Id == id))
             {
                 return BadRequest();
             }
+
             var reservation = _context.Reservation.Where(r => r.Id == reservationVM.Id).FirstOrDefault();
-            Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
-            List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
-            foreach (var p in reservationVM.Personnels)
+
+            if (reservationVM.Vehicule != null && reservationVM.Vehicule.Id != null)
             {
-                pr.Add(new Personnel_Reservation()
-                {
-                    PersonnelId = p.Id,
-                    ReservationID = reservationVM.Id
-                });
+                var vehicule = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
+                reservation.Vehicule = vehicule;
             }
-            reservation.Update(reservationVM, v, pr);
+
+            if (reservationVM.Personnels != null)
+            {
+                List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
+                foreach (var p in reservationVM.Personnels)
+                {
+                    pr.Add(new Personnel_Reservation()
+                    {
+                        PersonnelId = p.Id,
+                        ReservationID = reservationVM.Id
+                    });
+                }
+                reservation.Personnel_Reservations = pr;
+            }
+
+            reservation.Update(reservationVM);
 
             _context.Entry(reservation).State = EntityState.Modified;
 

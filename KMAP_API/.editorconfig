@@ -2,3 +2,6 @@
 
 # CS1591: Commentaire XML manquant pour le type ou le membre visible publiquement
 dotnet_diagnostic.CS1591.severity = none
+
+# CS1573: Le paramètre n'a pas de balise param correspondante dans le commentaire XML (contrairement à d'autres paramètres)
+dotnet_diagnostic.CS1573.severity = none

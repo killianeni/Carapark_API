@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -25,7 +25,7 @@ namespace KMAP_API.Controllers
 
 
         // GET: api/Personnel
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user,admin,super-admin")]
         [Route("GetPersonnelsBySite/{idSite}")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonnelViewModel>>> GetPersonnelsBySite(Guid idSite)
@@ -39,7 +39,7 @@ namespace KMAP_API.Controllers
             return listP;
         }
 
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user,admin,super-admin")]
         // GET: api/Personnel/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonnelViewModel>> GetPersonnel(Guid id)
@@ -60,7 +60,7 @@ namespace KMAP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPersonnel(Guid id, PersonnelViewModel personnelVM)
         {
-            if (id != personnelVM.Id)
+            if (!_context.Personnel.Any(p => p.Id == id))
             {
                 return BadRequest();
             }

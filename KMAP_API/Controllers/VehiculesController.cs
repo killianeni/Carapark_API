@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class VehiculesController : ControllerBase
@@ -28,7 +28,7 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesBySite(Guid id)
         {
             var v = new List<VehiculeViewModel>();
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id).Include(v => v.Cles).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -37,13 +37,13 @@ namespace KMAP_API.Controllers
 
 
         // GET: api/Vehicules/GetVehiculeNonResaBySiteAndDate
-        [Authorize(Roles = "user")]
-        [HttpGet("GetVehiculeNonResaBySiteAndDate/{id}/{dateDebut}/{dateFin}")]
-        public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculeNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
+        [Authorize(Roles = "user,admin,super-admin")]
+        [HttpGet("GetVehiculesNonResaBySiteAndDate/{id}/{dateDebut}/{dateFin}")]
+        public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
         {
             var v = new List<VehiculeViewModel>();
             var listeVehiculeReserve = ListeVehiculeReserve(dateDebut, dateFin);
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id)).Include(v => v.Cles).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id)).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -51,8 +51,8 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Vehicules/CountVehiculeActifBySite
-        [Authorize(Roles = "user")]
-        [HttpGet("CountVehiculeActifBySite/{id}")]
+        [Authorize(Roles = "user,admin,super-admin")]
+        [HttpGet("CountVehiculesActifBySite/{id}")]
         public int CountVehiculeActifBySite(Guid id)
         {
             return _context.Vehicule.Where(v => v.Site.Id == id && v.Actif == true).Count();
@@ -62,7 +62,7 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VehiculeViewModel>> GetVehicule(Guid id)
         {
-            var vehicule = new VehiculeViewModel(await _context.Vehicule.Include(v => v.Cles).FirstOrDefaultAsync(v => v.Id == id));
+            var vehicule = new VehiculeViewModel(await _context.Vehicule.Include(v => v.Cles).Include(v => v.Site).FirstOrDefaultAsync(v => v.Id == id));
 
             if (vehicule == null)
             {
@@ -76,12 +76,16 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVehicule(Guid id, Vehicule vehicule)
+        public async Task<IActionResult> PutVehicule(Guid id, VehiculeViewModel vehiculeVM)
         {
-            if (id != vehicule.Id)
+            if (!_context.Vehicule.Any(v => v.Id == id))
             {
                 return BadRequest();
             }
+
+            var vehicule = _context.Vehicule.FirstOrDefault(s => s.Id == id);
+
+            vehicule.Update(vehiculeVM);
 
             _context.Entry(vehicule).State = EntityState.Modified;
 
@@ -108,9 +112,21 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Vehicule>> PostVehicule(Vehicule vehicule)
+        public async Task<ActionResult<Vehicule>> PostVehicule(VehiculeViewModel vehiculeVM)
         {
-            _context.Vehicule.Add(vehicule);
+            var site = _context.Site.FirstOrDefault(s => s.Id == vehiculeVM.IdSite);
+
+            _context.Vehicule.Add(new Vehicule()
+            {
+                NumImmat = vehiculeVM.NumImmat,
+                Modele = vehiculeVM.Modele,
+                NbPlaces = vehiculeVM.NbPlaces,
+                NbPortes = vehiculeVM.NbPortes,
+                TypeCarbu = vehiculeVM.TypeCarbu,
+                Actif = vehiculeVM.Actif,
+                Site = site
+            });
+
             await _context.SaveChangesAsync();
 
             return Ok();

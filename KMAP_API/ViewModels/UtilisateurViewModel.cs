@@ -4,19 +4,10 @@ using System.Collections.Generic;
 
 namespace KMAP_API.ViewModels
 {
-    public class UtilisateurViewModel
+    public class UtilisateurViewModel : PersonnelViewModel
     {
-        public Guid Id { get; set; }
 
         public Guid IdEntreprise { get; set; }
-
-        public string Nom { get; set; }
-
-        public string Prenom { get; set; }
-
-        public string Mail { get; set; }
-
-        public string Permis { get; set; }
 
         public RoleViewModel Role { get; set; }
 
@@ -24,7 +15,7 @@ namespace KMAP_API.ViewModels
 
         public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
 
-        public UtilisateurViewModel()
+        public UtilisateurViewModel() : base()
         {
 
         }

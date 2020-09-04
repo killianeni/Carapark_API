@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UtilisateursController : ControllerBase
@@ -50,7 +50,7 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Utilisateurs/5
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user,admin,super-admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UtilisateurViewModel>> GetUtilisateur(Guid id)
         {
@@ -67,14 +67,24 @@ namespace KMAP_API.Controllers
         // PUT: api/Utilisateurs/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user,admin,super-admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUtilisateur(Guid id, Utilisateur utilisateur)
+        public async Task<IActionResult> PutUtilisateur(Guid id, UtilisateurViewModel utilisateurVM)
         {
-            if (id != utilisateur.Id)
+            if (!_context.Utilisateur.Any(u => u.Id == id))
             {
                 return BadRequest();
             }
+
+            var utilisateur = _context.Utilisateur.FirstOrDefault(u => u.Id == id);
+
+            if (utilisateurVM.Role != null && utilisateurVM.Role.Id != null)
+            {
+                var role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id);
+                utilisateur.Role = role;
+            }
+
+            utilisateur.Update(utilisateurVM);
 
             _context.Entry(utilisateur).State = EntityState.Modified;
 
@@ -101,9 +111,13 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
+        public async Task<ActionResult<Utilisateur>> UpUtilisateur(UtilisateurViewModel utilisateurVM)
         {
-            _context.Utilisateur.Add(utilisateur);
+            var utilisateur = (Utilisateur)_context.Personnel.FirstOrDefault(p => p.Id == utilisateurVM.Id);
+            utilisateur.Role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id);
+
+            _context.Entry(utilisateur).State = EntityState.Modified;
+
             await _context.SaveChangesAsync();
 
             return Ok();
