@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -23,7 +23,9 @@ namespace KMAP_API.Controllers
             _context = context;
         }
 
+
         // GET: api/Personnel
+        [Authorize(Roles = "user")]
         [Route("GetPersonnelsBySite/{idSite}")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonnelViewModel>>> GetPersonnelsBySite(Guid idSite)
@@ -37,6 +39,7 @@ namespace KMAP_API.Controllers
             return listP;
         }
 
+        [Authorize(Roles = "user")]
         // GET: api/Personnel/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonnelViewModel>> GetPersonnel(Guid id)

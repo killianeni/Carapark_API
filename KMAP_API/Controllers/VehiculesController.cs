@@ -1,6 +1,7 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class VehiculesController : ControllerBase
@@ -35,6 +37,7 @@ namespace KMAP_API.Controllers
 
 
         // GET: api/Vehicules/GetVehiculeNonResaBySiteAndDate
+        [Authorize(Roles = "user")]
         [HttpGet("GetVehiculeNonResaBySiteAndDate/{id}/{dateDebut}/{dateFin}")]
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculeNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
         {
@@ -47,14 +50,8 @@ namespace KMAP_API.Controllers
             return v;
         }
 
-        private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
-        {
-            return _context.Reservation.Where(r => (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
-        }
-
-
-
         // GET: api/Vehicules/CountVehiculeActifBySite
+        [Authorize(Roles = "user")]
         [HttpGet("CountVehiculeActifBySite/{id}")]
         public int CountVehiculeActifBySite(Guid id)
         {
@@ -135,12 +132,16 @@ namespace KMAP_API.Controllers
             return Ok();
         }
 
-
         #region private function
 
         private bool VehiculeExists(Guid id)
         {
             return _context.Vehicule.Any(e => e.Id == id);
+        }
+
+        private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
+        {
+            return _context.Reservation.Where(r => (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
         }
 
         #endregion
