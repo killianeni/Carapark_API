@@ -83,19 +83,18 @@ namespace KMAP_API.Models
             Personnel_Reservations = pr;
         }
 
-        public void Update(ReservationViewModel rvm, Vehicule v, List<Personnel_Reservation> pr) {
-            var hDebut = (rvm.TimeStart == "AM") ? 9 : 15;
-            var hFin = (rvm.TimeEnd == "AM") ? 9 : 15;
-            DateDebut = new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0);
-            DateFin = new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0);
-            SiteDestination = rvm.SiteDestination;
-            Description = rvm.Description;
+        public void Update(ReservationViewModel rvm)
+        {
+            var hDebut = (rvm.TimeStart != null) ? ((rvm.TimeStart == "AM") ? 9 : 15) : 0;
+            var hFin = (rvm.TimeEnd != null) ? ((rvm.TimeEnd == "AM") ? 9 : 15) : 0;
+            DateDebut = (hDebut != 0) ? new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0) : DateDebut;
+            DateFin = (hFin != 0) ? new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0) : DateFin;
+            SiteDestination = rvm.SiteDestination ?? SiteDestination;
+            Description = rvm.Description ?? Description;
             ConfirmationCle = rvm.ConfirmationCle;
             IsAccepted = rvm.IsAccepted;
             IsRejeted = rvm.IsRejeted;
-            Commentaire = rvm.Commentaire;
-            Vehicule = v;
-            Personnel_Reservations = pr;
+            Commentaire = rvm.Commentaire ?? Commentaire;
         }
 
     }

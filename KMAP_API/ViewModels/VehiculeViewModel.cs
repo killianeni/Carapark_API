@@ -18,6 +18,8 @@ namespace KMAP_API.ViewModels
 
         public string TypeCarbu { get; set; }
 
+        public Guid IdSite { get; set; }
+
         public bool Actif { get; set; }
 
         public ICollection<CleViewModel> Cles { get; set; } = new List<CleViewModel>();
@@ -36,6 +38,7 @@ namespace KMAP_API.ViewModels
             NbPortes = v.NbPortes;
             TypeCarbu = v.TypeCarbu;
             Actif = v.Actif;
+            IdSite = v.Site.Id;
             foreach (var cle in v.Cles)
             {
                 Cles.Add(new CleViewModel(cle));

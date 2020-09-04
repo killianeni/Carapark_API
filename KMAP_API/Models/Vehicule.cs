@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KMAP_API.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,6 +33,16 @@ namespace KMAP_API.Models
         public Vehicule()
         {
 
+        }
+
+        public void Update(VehiculeViewModel vvm)
+        {
+            NumImmat = vvm.NumImmat ?? NumImmat;
+            Modele = vvm.Modele ?? Modele;
+            NbPlaces = (vvm.NbPlaces != 0) ? vvm.NbPlaces : NbPlaces;
+            NbPortes = (vvm.NbPortes != 0) ? vvm.NbPortes : NbPortes;
+            TypeCarbu = vvm.TypeCarbu ?? TypeCarbu;
+            Actif = vvm.Actif;
         }
     }
 }

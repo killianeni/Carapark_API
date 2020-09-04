@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SitesController : ControllerBase
@@ -84,21 +84,14 @@ namespace KMAP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSite(Guid id, SiteViewModel siteVM)
         {
-            if (id != siteVM.Id)
+            if (!_context.Site.Any(s => s.Id == id))
             {
                 return BadRequest();
             }
 
             var site = _context.Site.FirstOrDefault(s => s.Id == id);
-            if (siteVM.Entreprise.Id != null)
-            {
-                var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
-                site.Update(siteVM, e);
-            }
-            else
-            {
-                site.Update(siteVM);
-            }
+
+            site.Update(siteVM);
 
             _context.Entry(site).State = EntityState.Modified;
 
@@ -128,13 +121,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<Site>> PostSite(SiteViewModel siteVM)
         {
             var e = _context.Entreprise.FirstOrDefault(e => e.Id == siteVM.Entreprise.Id);
-            var site = new Site()
+
+            _context.Site.Add(new Site()
             {
                 Libelle = siteVM.Libelle,
                 Entreprise = e
-            };
-
-            _context.Site.Add(site);
+            });
             await _context.SaveChangesAsync();
 
             return Ok();
