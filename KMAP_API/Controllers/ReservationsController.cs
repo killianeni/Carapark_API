@@ -104,7 +104,7 @@ namespace KMAP_API.Controllers
                 return BadRequest();
             }
 
-            var reservation = _context.Reservation.FirstOrDefault(r => r.Id == reservationVM.Id);
+            var reservation = _context.Reservation.FirstOrDefault(r => r.Id == id);
 
             if (reservationVM.Vehicule != null && reservationVM.Vehicule.Id != null)
             {
@@ -118,7 +118,7 @@ namespace KMAP_API.Controllers
                 reservation.Cle = cle;
             }
 
-            if (reservationVM.Personnels != null)
+            if (reservationVM.Personnels.Count > 0)
             {
                 List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
                 foreach (var p in reservationVM.Personnels)
