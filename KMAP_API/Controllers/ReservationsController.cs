@@ -210,18 +210,26 @@ namespace KMAP_API.Controllers
             var month = Int32.Parse(date.Split('-')[0]);
             var dateT = new DateTime(year, month, 1, 9, 0, 0);
 
+            FullDay fullDay;
+
             for (int i = 0; i < 31; i++)
             {
+                fullDay = new FullDay();
                 if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
-                    fullDays.Add(new FullDay() { Date = dateT, AM = true });
+                    fullDay.AM = true;
                 }
                 dateT = dateT.AddHours(6);
                 if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
-                    fullDays.Add(new FullDay() { Date = dateT, PM = true });
+                    fullDay.PM = true;
                 }
                 dateT = dateT.AddHours(18);
+
+                if (fullDay.AM || fullDay.PM)
+                {
+                    fullDays.Add(fullDay);
+                }
             }
 
             return fullDays;
