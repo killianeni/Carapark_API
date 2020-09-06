@@ -214,7 +214,7 @@ namespace KMAP_API.Controllers
 
             for (int i = 0; i < 31; i++)
             {
-                fullDay = new FullDay();
+                fullDay = new FullDay() { Date = dateT };
                 if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
                 {
                     fullDay.AM = true;
