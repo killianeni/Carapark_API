@@ -85,10 +85,16 @@ namespace KMAP_API.Models
 
         public void Update(ReservationViewModel rvm)
         {
-            var hDebut = (rvm.TimeStart != null) ? ((rvm.TimeStart == "AM") ? 9 : 15) : 0;
-            var hFin = (rvm.TimeEnd != null) ? ((rvm.TimeEnd == "AM") ? 9 : 15) : 0;
-            DateDebut = (hDebut != 0) ? new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0) : DateDebut;
-            DateFin = (hFin != 0) ? new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0) : DateFin;
+            if(rvm.DateDebut != DateTime.MinValue)
+            {
+                var hDebut = (rvm.TimeStart != null) ? ((rvm.TimeStart == "AM") ? 9 : 15) : 0;
+                DateDebut = (hDebut != 0) ? new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0) : DateDebut;
+            }
+            if (rvm.DateFin != DateTime.MinValue)
+            {
+                var hFin = (rvm.TimeEnd != null) ? ((rvm.TimeEnd == "AM") ? 9 : 15) : 0;
+                DateFin = (hFin != 0) ? new DateTime(rvm.DateFin.Year, rvm.DateFin.Month, rvm.DateFin.Day, hFin, 0, 0) : DateFin;
+            }
             SiteDestination = rvm.SiteDestination ?? SiteDestination;
             Description = rvm.Description ?? Description;
             ConfirmationCle = rvm.ConfirmationCle;
