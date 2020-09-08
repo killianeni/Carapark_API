@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KMAP_API.ViewModels;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,11 @@ namespace KMAP_API.Models
         public Cle()
         {
 
+        }
+
+        public void Update(CleViewModel cvm)
+        {
+            Libelle = cvm.Libelle;
         }
     }
 }
