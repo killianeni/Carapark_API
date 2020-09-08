@@ -85,6 +85,18 @@ namespace KMAP_API.Controllers
 
             var vehicule = _context.Vehicule.FirstOrDefault(s => s.Id == id);
 
+            var cles = new List<Cle>();
+            if (vehiculeVM.Cles.Count > 0)
+            {
+                foreach (var cleVM in vehiculeVM.Cles)
+                {
+                    var cle = _context.Cle.FirstOrDefault(c => c.Id == cleVM.Id);
+                    cle.Update(cleVM);
+                    cles.Add(cle);
+                }
+                vehicule.Cles = cles;
+            }
+
             vehicule.Update(vehiculeVM);
 
             _context.Entry(vehicule).State = EntityState.Modified;
@@ -117,7 +129,7 @@ namespace KMAP_API.Controllers
             var site = _context.Site.FirstOrDefault(s => s.Id == vehiculeVM.IdSite);
 
             var cles = new List<Cle>();
-            if(vehiculeVM.Cles.Count != 0)
+            if(vehiculeVM.Cles.Count > 0)
             {
                 foreach (var cleVM in vehiculeVM.Cles)
                 {
