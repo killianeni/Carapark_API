@@ -116,6 +116,20 @@ namespace KMAP_API.Controllers
         {
             var site = _context.Site.FirstOrDefault(s => s.Id == vehiculeVM.IdSite);
 
+            var cles = new List<Cle>();
+            if(vehiculeVM.Cles.Count != 0)
+            {
+                foreach (var cleVM in vehiculeVM.Cles)
+                {
+                    var cle = new Cle()
+                    {
+                        Libelle = cleVM.Libelle
+                    };
+                    cles.Add(cle);
+                    _context.Cle.Add(cle);
+                }
+            }
+
             _context.Vehicule.Add(new Vehicule()
             {
                 NumImmat = vehiculeVM.NumImmat,
@@ -124,7 +138,8 @@ namespace KMAP_API.Controllers
                 NbPortes = vehiculeVM.NbPortes,
                 TypeCarbu = vehiculeVM.TypeCarbu,
                 Actif = vehiculeVM.Actif,
-                Site = site
+                Site = site,
+                Cles = cles
             });
 
             await _context.SaveChangesAsync();
