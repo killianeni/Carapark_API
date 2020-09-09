@@ -52,6 +52,39 @@ namespace KMAP_API.Migrations
                     b.ToTable("Entreprise");
                 });
 
+            modelBuilder.Entity("KMAP_API.Models.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Commentaire")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateNotif")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("ReservationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TypeNotif")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("UtilisateurId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.HasIndex("UtilisateurId");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("KMAP_API.Models.Personnel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -122,11 +155,14 @@ namespace KMAP_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRejeted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SiteDestination")
                         .HasColumnType("text");
-
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UtilisateurId")
                         .HasColumnType("uuid");
@@ -232,6 +268,17 @@ namespace KMAP_API.Migrations
                     b.HasOne("KMAP_API.Models.Vehicule", "Vehicule")
                         .WithMany("Cles")
                         .HasForeignKey("VehiculeId");
+                });
+
+            modelBuilder.Entity("KMAP_API.Models.Notification", b =>
+                {
+                    b.HasOne("KMAP_API.Models.Reservation", "Reservation")
+                        .WithMany()
+                        .HasForeignKey("ReservationId");
+
+                    b.HasOne("KMAP_API.Models.Utilisateur", "Utilisateur")
+                        .WithMany()
+                        .HasForeignKey("UtilisateurId");
                 });
 
             modelBuilder.Entity("KMAP_API.Models.Personnel", b =>

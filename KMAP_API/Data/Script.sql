@@ -7,6 +7,8 @@ DROP TABLE IF EXISTS public."Role" CASCADE;
 DROP TABLE IF EXISTS public."Personnel" CASCADE;
 DROP TABLE IF EXISTS public."Reservation" CASCADE;
 DROP TABLE IF EXISTS public."Personnel_Reservations" CASCADE;
+DROP TABLE IF EXISTS public."Notification" CASCADE;
+DROP TABLE IF EXISTS public."__EFMigrationsHistory" CASCADE;
 
 ----------------------------------------------------------------------------------------------------------
 -- Create tables
@@ -158,6 +160,32 @@ TABLESPACE pg_default;
 ALTER TABLE public."Reservation"
     OWNER to kmap_admin;
 
+-- Table: public."Notification"
+CREATE TABLE public."Notification"
+(
+    "Id" uuid NOT NULL,
+    "UtilisateurId" uuid,
+    "ReservationId" uuid,
+    "DateNotif" timestamp without time zone NOT NULL,
+    "TypeNotif" integer NOT NULL,
+    "Commentaire" text COLLATE pg_catalog."default",
+    "Checked" boolean NOT NULL,
+    CONSTRAINT "PK_Notification" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Notification_Personnel_UtilisateurId" FOREIGN KEY ("UtilisateurId")
+        REFERENCES public."Personnel" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT,
+    CONSTRAINT "FK_Notification_Reservation_ReservationId" FOREIGN KEY ("ReservationId")
+        REFERENCES public."Reservation" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public."Notification"
+    OWNER to kmap_admin;
+
 -- Table: public."Personnel_Reservations"
 CREATE TABLE public."Personnel_Reservations"
 (
@@ -304,16 +332,25 @@ INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId
 
 -- Reservation
 
-INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted", "Commentaire")
-	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/09/01 09:00:00', '2020/09/05 15:00:00', 'Réunion rennes', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', false, false, 'Changer date');
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/09/04 15:00:00', '2020/09/08 15:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, false);
+	VALUES ('ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', 'Rennes', true, '2020/09/01 09:00:00', '2020/09/05 15:00:00', 'Réunion rennes', '27a51826-0f74-42f0-b3a7-3f51246545e6', '49a46fa6-007f-42cd-9319-23eb0c012c14', '975938d6-8599-4384-b5c3-9d6ec159f755', false, false);
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('d4ae6c6e-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 09:00:00', '2020/09/10 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '49a46fa6-007f-42cd-9319-23eb0c012c14', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, false);
+	VALUES ('e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d', 'Angers', false, '2020/09/04 15:00:00', '2020/09/08 15:00:00', 'Visite Angers', '27a51826-0f74-42f0-b3a7-3f51246545e6', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', true, false);
 INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
-	VALUES ('e456d584-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 15:00:00', '2020/09/15 09:00:00', 'Visite Angers', 'dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, true);
+	VALUES ('d4ae6c6e-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 09:00:00', '2020/09/10 09:00:00', 'Visite Angers', '27a51826-0f74-42f0-b3a7-3f51246545e6', '49a46fa6-007f-42cd-9319-23eb0c012c14', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, false);
+INSERT INTO public."Reservation"("Id", "SiteDestination", "ConfirmationCle", "DateDebut", "DateFin", "Description", "UtilisateurId", "VehiculeId", "CleId", "IsAccepted", "IsRejeted")
+	VALUES ('e456d584-eb6f-11ea-adc1-0242ac120002', 'Angers', false, '2020/09/08 15:00:00', '2020/09/15 09:00:00', 'Visite Angers', '27a51826-0f74-42f0-b3a7-3f51246545e6', '1fa6da4d-8d86-4499-86f5-efb0bf7114ab', '93cef5b6-9231-44bb-bf88-e54a7107c7cf', false, true);
+
+-- Notification
+
+INSERT INTO public."Notification"("Id", "UtilisateurId", "ReservationId", "DateNotif", "TypeNotif", "Commentaire", "Checked")
+	VALUES ('f31c1ea2-3c4e-43f8-af16-5d0770f83d8e', '27a51826-0f74-42f0-b3a7-3f51246545e6', 'ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', '2020/08/20 09:00:00', 1, 'Changer la voiture', true);
+INSERT INTO public."Notification"("Id", "UtilisateurId", "ReservationId", "DateNotif", "TypeNotif", "Checked")
+	VALUES ('93cf905f-f25e-4e4d-839e-ee9dcbf88f11', '27a51826-0f74-42f0-b3a7-3f51246545e6', 'ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', '2020/08/22 09:00:00', 2, false);
+INSERT INTO public."Notification"("Id", "UtilisateurId", "ReservationId", "DateNotif", "TypeNotif", "Commentaire", "Checked")
+	VALUES ('f052761e-c3d6-47dd-86d3-6e73a5662d75', '27a51826-0f74-42f0-b3a7-3f51246545e6', 'ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a', '2020/08/25 09:00:00', 3, 'RU annulé', false);
 
 -- Personnel_Reservation
 
 INSERT INTO public."Personnel_Reservations"("PersonnelId", "ReservationID") VALUES ('62b473a0-91f0-4e6f-bea7-1953ac199157', 'ac4e6ceb-57cd-4a60-81f4-53717b0fdf0a');
-INSERT INTO public."Personnel_Reservations"("PersonnelId", "ReservationID") VALUES ('27a51826-0f74-42f0-b3a7-3f51246545e6', 'e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d');
+INSERT INTO public."Personnel_Reservations"("PersonnelId", "ReservationID") VALUES ('dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', 'e4c0c87b-84e9-4726-a19f-7b3f4a27eb1d');

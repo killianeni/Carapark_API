@@ -31,6 +31,7 @@ namespace KMAP_API.Data
         public DbSet<Site> Site { get; set; }
         public DbSet<Vehicule> Vehicule { get; set; }
         public DbSet<Personnel_Reservation> Personnel_Reservations { get; set; }
+        public DbSet<Notification> Notification { get; set; }
 
     }
 }

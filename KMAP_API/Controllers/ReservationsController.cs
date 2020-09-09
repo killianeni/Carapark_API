@@ -79,6 +79,45 @@ namespace KMAP_API.Controllers
             return r;
         }
 
+        // GET: api/Reservations/GetFullReservedDays
+        /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
+        [Route("GetFullReservedDays/{idSite}/{date}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FullDay>>> GetFullReservedDays(Guid idSite, string date)
+        {
+            var fullDays = new List<FullDay>();
+            var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
+
+            var listResa = (await GetReservationsBySiteAndDate(idSite, date)).Value.Where(r => (State)r.Status != State.Rejet);
+            var year = Int32.Parse(date.Split('-')[1]);
+            var month = Int32.Parse(date.Split('-')[0]);
+            var dateT = new DateTime(year, month, 1, 9, 0, 0);
+
+            FullDay fullDay;
+
+            for (int i = 0; i < 31; i++)
+            {
+                fullDay = new FullDay() { Date = dateT };
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDay.AM = true;
+                }
+                dateT = dateT.AddHours(6);
+                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
+                {
+                    fullDay.PM = true;
+                }
+                dateT = dateT.AddHours(18);
+
+                if (fullDay.AM || fullDay.PM)
+                {
+                    fullDays.Add(fullDay);
+                }
+            }
+
+            return fullDays;
+        }
+
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ReservationViewModel>> GetReservation(Guid id)
@@ -105,6 +144,8 @@ namespace KMAP_API.Controllers
             }
 
             var reservation = _context.Reservation.FirstOrDefault(r => r.Id == id);
+
+            CreateNotifications(reservation, reservationVM);
 
             if (reservationVM.Vehicule != null && reservationVM.Vehicule.Id != null)
             {
@@ -159,7 +200,7 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(ReservationViewModel reservationVM)
+        public async Task<IActionResult> PostReservation(ReservationViewModel reservationVM)
         {
             Utilisateur u = _context.Utilisateur.Where(u => u.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
             Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
@@ -182,7 +223,7 @@ namespace KMAP_API.Controllers
 
         // DELETE: api/Reservations/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Reservation>> DeleteReservation(Guid id)
+        public async Task<IActionResult> DeleteReservation(Guid id)
         {
             var reservation = await _context.Reservation.FindAsync(id);
             if (reservation == null)
@@ -196,46 +237,6 @@ namespace KMAP_API.Controllers
             return Ok();
         }
 
-        // GET: api/Reservations/GetFullReservedDays
-        /// <param name="date"> mm-aaaa (si 01 -> 1 ) </param>
-        [Route("GetFullReservedDays/{idSite}/{date}")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<FullDay>>> GetFullReservedDays(Guid idSite, string date)
-        {
-            var fullDays = new List<FullDay>();
-            var nbMaxVehicule = new VehiculesController(_context).CountVehiculeActifBySite(idSite);
-
-            var listResa = (await GetReservationsBySiteAndDate(idSite, date)).Value.Where(r => (State)r.Status != State.Rejet);
-            var year = Int32.Parse(date.Split('-')[1]);
-            var month = Int32.Parse(date.Split('-')[0]);
-            var dateT = new DateTime(year, month, 1, 9, 0, 0);
-
-            FullDay fullDay;
-
-            for (int i = 0; i < 31; i++)
-            {
-                fullDay = new FullDay() { Date = dateT };
-                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
-                {
-                    fullDay.AM = true;
-                }
-                dateT = dateT.AddHours(6);
-                if (listResa.Where(r => r.DateDebut <= dateT && r.DateFin >= dateT).Count() == nbMaxVehicule)
-                {
-                    fullDay.PM = true;
-                }
-                dateT = dateT.AddHours(18);
-
-                if (fullDay.AM || fullDay.PM)
-                {
-                    fullDays.Add(fullDay);
-                }
-            }
-
-            return fullDays;
-        }
-
-
         #region Function private
 
         //Get true if reservation exist
@@ -244,6 +245,40 @@ namespace KMAP_API.Controllers
             return _context.Reservation.Any(e => e.Id == id);
         }
 
+        private void CreateNotifications(Reservation r, ReservationViewModel rvm)
+        {
+            if(!r.IsAccepted && rvm.IsAccepted)
+            {
+                _context.Notification.Add(new Notification()
+                {
+                    Utilisateur = r.Utilisateur,
+                    Reservation = r,
+                    DateNotif = DateTime.Now,
+                    TypeNotif = State.Valid
+                });
+            }
+            if (!r.IsRejeted && rvm.IsRejeted)
+            {
+                _context.Notification.Add(new Notification()
+                {
+                    Utilisateur = r.Utilisateur,
+                    Reservation = r,
+                    Commentaire = rvm.Commentaire,
+                    DateNotif = DateTime.Now,
+                    TypeNotif = State.Rejet
+                });
+            }
+            if (!r.ConfirmationCle && rvm.ConfirmationCle)
+            {
+                _context.Notification.Add(new Notification()
+                {
+                    Utilisateur = r.Utilisateur,
+                    Reservation = r,
+                    DateNotif = DateTime.Now,
+                    TypeNotif = State.Close
+                });
+            }
+        }
 
         #endregion
     }
