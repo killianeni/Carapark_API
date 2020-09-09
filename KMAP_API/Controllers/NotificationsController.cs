@@ -38,7 +38,7 @@ namespace KMAP_API.Controllers
             return n;
         }
 
-        // GET: api/Notifications/AddCommentNotif
+        // POST: api/Notifications/AddCommentNotif
         [Route("AddCommentNotif")]
         [HttpPost]
         public async Task<IActionResult> AddCommentNotif(NotificationViewModel notificationVM)
