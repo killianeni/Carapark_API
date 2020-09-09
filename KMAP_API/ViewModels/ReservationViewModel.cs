@@ -93,7 +93,6 @@ namespace KMAP_API.ViewModels
             ConfirmationCle = r.ConfirmationCle;
             IsAccepted = r.IsAccepted;
             IsRejeted = r.IsRejeted;
-            Commentaire = r.Commentaire;
             Status = (int)r.State;
         }
     }
