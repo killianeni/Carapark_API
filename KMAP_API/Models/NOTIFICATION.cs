@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KMAP_API.ViewModels;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,6 +26,13 @@ namespace KMAP_API.Models
         public Notification()
         {
 
+        }
+        public void Update(NotificationViewModel nvm)
+        {
+            DateNotif = nvm.DateNotif;
+            TypeNotif = nvm.TypeNotif;
+            Commentaire = nvm.Commentaire ?? Commentaire;
+            Checked = nvm.Checked;
         }
     }
 }
