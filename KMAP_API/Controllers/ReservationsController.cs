@@ -262,6 +262,7 @@ namespace KMAP_API.Controllers
                 {
                     Utilisateur = r.Utilisateur,
                     Reservation = r,
+                    Commentaire = "La réservation à été validé",
                     DateNotif = DateTime.Now,
                     TypeNotif = State.Valid
                 });
@@ -283,20 +284,9 @@ namespace KMAP_API.Controllers
                 {
                     Utilisateur = r.Utilisateur,
                     Reservation = r,
+                    Commentaire = "La réservation à été cloturé",
                     DateNotif = DateTime.Now,
                     TypeNotif = State.Close
-                });
-            }
-
-            if(!string.IsNullOrEmpty(rvm.Commentaire))
-            {
-                _context.Notification.Add(new Notification()
-                {
-                    Utilisateur = r.Utilisateur,
-                    Reservation = r,
-                    Commentaire = rvm.Commentaire,
-                    DateNotif = DateTime.Now,
-                    TypeNotif = State.Waiting
                 });
             }
         }
