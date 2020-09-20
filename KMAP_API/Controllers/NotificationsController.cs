@@ -56,6 +56,7 @@ namespace KMAP_API.Controllers
             };
 
             _context.Notification.Add(notif);
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
