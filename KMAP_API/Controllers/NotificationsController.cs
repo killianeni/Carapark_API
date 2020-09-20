@@ -38,6 +38,20 @@ namespace KMAP_API.Controllers
             return n;
         }
 
+        // GET: api/Notifications/GetNotificationsByReservation
+        [Route("GetNotificationsByUser/{idReservation}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<NotificationViewModel>>> GetNotificationsByReservation(Guid idReservation)
+        {
+            var n = new List<NotificationViewModel>();
+            foreach (var notification in await _context.Notification.Include(n => n.Utilisateur).Include(n => n.Reservation).Where(n => n.Reservation.Id == idReservation).ToListAsync())
+            {
+                n.Add(new NotificationViewModel(notification));
+            }
+
+            return n;
+        }
+
         // POST: api/Notifications/AddCommentNotif
         [Route("AddCommentNotif")]
         [HttpPost]
