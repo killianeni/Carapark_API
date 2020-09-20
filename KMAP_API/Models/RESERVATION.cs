@@ -63,7 +63,7 @@ namespace KMAP_API.Models
 
         }
 
-        public Reservation(ReservationViewModel rvm, Utilisateur u, Vehicule v, List<Personnel_Reservation> pr)
+        public Reservation(ReservationViewModel rvm, Utilisateur u, Vehicule v, Cle c, List<Personnel_Reservation> pr)
         {
             Id = rvm.Id;
             var hDebut = (rvm.TimeStart == "AM") ? 9 : 15;
@@ -77,6 +77,7 @@ namespace KMAP_API.Models
             IsRejeted = rvm.IsRejeted;
             Utilisateur = u;
             Vehicule = v;
+            Cle = c;
             Personnel_Reservations = pr;
         }
 

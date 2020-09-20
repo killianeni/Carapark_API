@@ -143,7 +143,7 @@ namespace KMAP_API.Controllers
                 return BadRequest();
             }
 
-            var reservation = _context.Reservation.FirstOrDefault(r => r.Id == id);
+            var reservation = _context.Reservation.Include(r => r.Utilisateur).Include(r => r.Personnel_Reservations).FirstOrDefault(r => r.Id == id);
 
             CreateNotifications(reservation, reservationVM);
 
@@ -159,19 +159,26 @@ namespace KMAP_API.Controllers
                 reservation.Cle = cle;
             }
 
-            if (reservationVM.Personnels.Count > 0)
+            List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
+            var pIds = reservationVM.Personnels.Select(p => p.Id).ToList();
+            foreach (var p in reservation.Personnel_Reservations)
             {
-                List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
-                foreach (var p in reservationVM.Personnels)
+                if(pIds.Contains(p.PersonnelId))
                 {
-                    pr.Add(new Personnel_Reservation()
-                    {
-                        PersonnelId = p.Id,
-                        ReservationID = reservationVM.Id
-                    });
+                    pIds.Remove(p.PersonnelId);
+                    pr.Add(p);
                 }
-                reservation.Personnel_Reservations = pr;
+
             }
+            foreach (var pid in pIds)
+            {
+                pr.Add(new Personnel_Reservation()
+                {
+                    PersonnelId = pid,
+                    ReservationID = reservationVM.Id
+                });
+            }
+            reservation.Personnel_Reservations = pr;
 
             reservation.Update(reservationVM);
 
@@ -204,7 +211,9 @@ namespace KMAP_API.Controllers
         {
             Utilisateur u = _context.Utilisateur.Where(u => u.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
             Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
+            Cle c = _context.Cle.Where(v => v.Id == reservationVM.Cle.Id).FirstOrDefault();
             List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
+
             foreach (var p in reservationVM.Personnels)
             {
                 pr.Add(new Personnel_Reservation()
@@ -213,7 +222,7 @@ namespace KMAP_API.Controllers
                     ReservationID = reservationVM.Id
                 });
             }
-            var reservation = new Reservation(reservationVM, u, v, pr);
+            var reservation = new Reservation(reservationVM, u, v, c, pr);
 
             _context.Reservation.Add(reservation);
             await _context.SaveChangesAsync();
@@ -276,6 +285,18 @@ namespace KMAP_API.Controllers
                     Reservation = r,
                     DateNotif = DateTime.Now,
                     TypeNotif = State.Close
+                });
+            }
+
+            if(!string.IsNullOrEmpty(rvm.Commentaire))
+            {
+                _context.Notification.Add(new Notification()
+                {
+                    Utilisateur = r.Utilisateur,
+                    Reservation = r,
+                    Commentaire = rvm.Commentaire,
+                    DateNotif = DateTime.Now,
+                    TypeNotif = State.Waiting
                 });
             }
         }

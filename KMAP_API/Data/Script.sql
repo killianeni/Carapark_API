@@ -139,7 +139,6 @@ CREATE TABLE public."Reservation"
     "CleId" uuid,
     "IsAccepted" boolean NOT NULL,
     "IsRejeted" boolean NOT NULL,
-    "Commentaire" text COLLATE pg_catalog."default",
     CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
         REFERENCES public."Cle" ("Id") MATCH SIMPLE
