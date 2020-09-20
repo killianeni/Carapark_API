@@ -39,7 +39,7 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Notifications/GetNotificationsByReservation
-        [Route("GetNotificationsByUser/{idReservation}")]
+        [Route("GetNotificationsByReservation/{idReservation}")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NotificationViewModel>>> GetNotificationsByReservation(Guid idReservation)
         {
