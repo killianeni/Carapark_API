@@ -29,9 +29,6 @@ namespace KMAP_API.Models
         }
         public void Update(NotificationViewModel nvm)
         {
-            DateNotif = nvm.DateNotif;
-            TypeNotif = nvm.TypeNotif;
-            Commentaire = nvm.Commentaire ?? Commentaire;
             Checked = nvm.Checked;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user,admin,super-admin")]
+    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "user,admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationsController : ControllerBase
@@ -59,11 +58,12 @@ namespace KMAP_API.Controllers
             return Ok();
         }
 
-        // PUT: api/Notification/5
+        // PUT: api/CheckNotif/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotification(Guid id, NotificationViewModel notificationVM)
+        [Route("CheckNotif/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> CheckNotif(Guid id, NotificationViewModel notificationVM)
         {
             if (!_context.Notification.Any(p => p.Id == id))
             {
