@@ -1,14 +1,13 @@
-﻿using System;
+﻿using KMAP_API.Data;
+using KMAP_API.Models;
+using KMAP_API.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KMAP_API.Data;
-using KMAP_API.Models;
-using Microsoft.AspNetCore.Authorization;
-using KMAP_API.ViewModels;
 
 namespace KMAP_API.Controllers
 {
@@ -74,5 +73,50 @@ namespace KMAP_API.Controllers
 
             return Ok();
         }
+
+        // PUT: api/CheckNotif/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Route("CheckNotif/{id}")]
+        [HttpPut]
+        public async Task<IActionResult> CheckNotif(Guid id, NotificationViewModel notificationVM)
+        {
+            if (!_context.Notification.Any(p => p.Id == id))
+            {
+                return BadRequest();
+            }
+
+            var notification = _context.Notification.Where(r => r.Id == id).FirstOrDefault();
+            notification.Update(notificationVM);
+
+            _context.Entry(notification).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!NotificationExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok();
+        }
+
+        #region private function
+
+        private bool NotificationExists(Guid id)
+        {
+            return _context.Notification.Any(e => e.Id == id);
+        }
+
+        #endregion
     }
 }
