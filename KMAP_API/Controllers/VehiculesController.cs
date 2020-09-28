@@ -187,7 +187,7 @@ namespace KMAP_API.Controllers
             return _context.Reservation.Where(r =>
                 (r.DateFin >= dateDebut && r.DateFin <= dateFin) ||
                 (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) ||
-                (r.DateDebut <= dateDebut && r.DateFin >= dateFin) && r.IsRejeted != true).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
+                (r.DateDebut <= dateDebut && r.DateFin >= dateFin) && r.IsRejeted == false).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
         }
 
         #endregion
