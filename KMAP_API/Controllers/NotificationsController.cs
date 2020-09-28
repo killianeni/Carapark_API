@@ -52,6 +52,9 @@ namespace KMAP_API.Controllers
         }
 
         // POST: api/Notifications/AddCommentNotif
+        /// <summary>
+        /// Permet de créer des notifs d'ajout de commentaire, les autres sont créés automatiquement dans la modif résa
+        /// </summary>
         [Route("AddCommentNotif")]
         [HttpPost]
         public async Task<IActionResult> AddCommentNotif(NotificationViewModel notificationVM)
