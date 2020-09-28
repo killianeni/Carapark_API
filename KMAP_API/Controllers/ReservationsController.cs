@@ -72,6 +72,7 @@ namespace KMAP_API.Controllers
                 .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
                 .Include(r => r.Utilisateur).ThenInclude(u => u.Role).Where(u => u.Utilisateur.Id == idUser)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise)
+                .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
                 .Include(r => r.Cle).ToListAsync())
             {
                 r.Add(new ReservationViewModel(reservation));
