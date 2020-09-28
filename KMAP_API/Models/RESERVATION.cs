@@ -63,7 +63,7 @@ namespace KMAP_API.Models
 
         }
 
-        public Reservation(ReservationViewModel rvm, Utilisateur u, Vehicule v, Cle c, List<Personnel_Reservation> pr)
+        public Reservation(ReservationViewModel rvm, Utilisateur u, Vehicule v, List<Personnel_Reservation> pr)
         {
             Id = rvm.Id;
             var hDebut = (rvm.TimeStart == "AM") ? 9 : 15;
@@ -77,13 +77,12 @@ namespace KMAP_API.Models
             IsRejeted = rvm.IsRejeted;
             Utilisateur = u;
             Vehicule = v;
-            Cle = c;
             Personnel_Reservations = pr;
         }
 
         public void Update(ReservationViewModel rvm)
         {
-            if(rvm.DateDebut != DateTime.MinValue)
+            if (rvm.DateDebut != DateTime.MinValue)
             {
                 var hDebut = (rvm.TimeStart != null) ? ((rvm.TimeStart == "AM") ? 9 : 15) : 0;
                 DateDebut = (hDebut != 0) ? new DateTime(rvm.DateDebut.Year, rvm.DateDebut.Month, rvm.DateDebut.Day, hDebut, 0, 0) : DateDebut;

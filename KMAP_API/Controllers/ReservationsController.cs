@@ -163,7 +163,7 @@ namespace KMAP_API.Controllers
             var pIds = reservationVM.Personnels.Select(p => p.Id).ToList();
             foreach (var p in reservation.Personnel_Reservations)
             {
-                if(pIds.Contains(p.PersonnelId))
+                if (pIds.Contains(p.PersonnelId))
                 {
                     pIds.Remove(p.PersonnelId);
                     pr.Add(p);
@@ -209,9 +209,8 @@ namespace KMAP_API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostReservation(ReservationViewModel reservationVM)
         {
-            Utilisateur u = _context.Utilisateur.Where(u => u.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
-            Vehicule v = _context.Vehicule.Where(v => v.Id == reservationVM.Vehicule.Id).FirstOrDefault();
-            Cle c = _context.Cle.Where(v => v.Id == reservationVM.Cle.Id).FirstOrDefault();
+            Utilisateur u = _context.Utilisateur.Where(ut => ut.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
+            Vehicule v = _context.Vehicule.Where(vh => vh.Id == reservationVM.Vehicule.Id).FirstOrDefault();
             List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
 
             foreach (var p in reservationVM.Personnels)
@@ -222,7 +221,7 @@ namespace KMAP_API.Controllers
                     ReservationID = reservationVM.Id
                 });
             }
-            var reservation = new Reservation(reservationVM, u, v, c, pr);
+            var reservation = new Reservation(reservationVM, u, v, pr);
 
             _context.Reservation.Add(reservation);
             await _context.SaveChangesAsync();
@@ -256,7 +255,7 @@ namespace KMAP_API.Controllers
 
         private void CreateNotifications(Reservation r, ReservationViewModel rvm)
         {
-            if(!r.IsAccepted && rvm.IsAccepted)
+            if (!r.IsAccepted && rvm.IsAccepted)
             {
                 _context.Notification.Add(new Notification()
                 {
