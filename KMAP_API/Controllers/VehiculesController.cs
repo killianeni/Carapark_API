@@ -129,7 +129,7 @@ namespace KMAP_API.Controllers
             var site = _context.Site.FirstOrDefault(s => s.Id == vehiculeVM.IdSite);
 
             var cles = new List<Cle>();
-            if(vehiculeVM.Cles.Count > 0)
+            if (vehiculeVM.Cles.Count > 0)
             {
                 foreach (var cleVM in vehiculeVM.Cles)
                 {
@@ -184,7 +184,10 @@ namespace KMAP_API.Controllers
 
         private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
         {
-            return _context.Reservation.Where(r => (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
+            return _context.Reservation.Where(r =>
+                (r.DateFin >= dateDebut && r.DateFin <= dateFin) ||
+                (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) ||
+                (r.DateDebut <= dateDebut && r.DateFin >= dateFin) && r.IsRejeted == false).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
         }
 
         #endregion
