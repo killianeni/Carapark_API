@@ -43,7 +43,9 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<NotificationViewModel>>> GetNotificationsByReservation(Guid idReservation)
         {
             var n = new List<NotificationViewModel>();
-            foreach (var notification in await _context.Notification.Include(n => n.Utilisateur).Include(n => n.Reservation).Where(n => n.Reservation.Id == idReservation).ToListAsync())
+            foreach (var notification in await _context.Notification.Include(n => n.Utilisateur)
+                .Include(n => n.Reservation).Where(n => n.Reservation.Id == idReservation)
+                .OrderByDescending(n => n.DateNotif).ToListAsync())
             {
                 n.Add(new NotificationViewModel(notification));
             }
