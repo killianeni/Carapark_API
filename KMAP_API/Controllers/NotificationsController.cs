@@ -1,13 +1,13 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -45,7 +45,7 @@ namespace KMAP_API.Controllers
             var n = new List<NotificationViewModel>();
             foreach (var notification in await _context.Notification.Include(n => n.Utilisateur)
                 .Include(n => n.Reservation).Where(n => n.Reservation.Id == idReservation)
-                .OrderByDescending(n => n.DateNotif).ToListAsync())
+                .OrderBy(n => n.DateNotif).ToListAsync())
             {
                 n.Add(new NotificationViewModel(notification));
             }
