@@ -34,16 +34,12 @@ namespace KMAP_API.Controllers
 
             foreach (var site in siteRequest)
             {
+                var sitVM = new SiteViewModel(site);
                 if (typePage == "utilisateur" || typePage == "all")
                 {
-                    sites.Add(
-                        new SiteViewModel(site)
-                        {
-                            NbUtilisateurs = site.Personnels.Count
-                        }
-                    );
+                    sitVM.NbUtilisateurs = site.Personnels.Count;
                 }
-                else if (typePage == "reservation" || typePage == "all")
+                if (typePage == "reservation" || typePage == "all")
                 {
                     var nbResa = 0;
                     foreach (var v in site.Vehicules)
@@ -51,21 +47,13 @@ namespace KMAP_API.Controllers
                         nbResa += v.Reservations.Count;
                     }
 
-                    sites.Add(new SiteViewModel(site)
-                    {
-                        NbReservations = nbResa
-                    }
-                );
+                    sitVM.NbReservations = nbResa;
                 }
-                else if (typePage == "vehicule" || typePage == "all")
+                if (typePage == "all")
                 {
-                    sites.Add(
-                        new SiteViewModel(site)
-                        {
-                            NbVehicules = site.Vehicules.Count
-                        }
-                    );
+                    sitVM.NbVehicules = site.Vehicules.Count;
                 }
+                sites.Add(sitVM);
             }
             return sites;
         }
