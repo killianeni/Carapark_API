@@ -59,7 +59,7 @@ namespace KMAP_API.Controllers
         }
 
         // GET: api/Sites/5
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<SiteViewModel>> GetSite(Guid id)
         {
             return new SiteViewModel(await _context.Site.Where(s => s.Id == id).Include(s => s.Entreprise).FirstOrDefaultAsync());
