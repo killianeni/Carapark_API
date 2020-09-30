@@ -30,7 +30,7 @@ namespace KMAP_API.Controllers
         {
             var sites = new List<SiteViewModel>();
 
-            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).ToListAsync();
+            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).OrderBy(s => s.Libelle).ToListAsync();
 
             foreach (var site in siteRequest)
             {
