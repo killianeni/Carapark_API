@@ -1,13 +1,13 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -30,43 +30,42 @@ namespace KMAP_API.Controllers
         {
             var sites = new List<SiteViewModel>();
 
-            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).ToListAsync();
+            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).OrderBy(s => s.Libelle).ToListAsync();
 
             foreach (var site in siteRequest)
             {
-                switch (typePage)
+                if (typePage == "utilisateur" || typePage == "all")
                 {
-                    case "utilisateur":
-                        sites.Add(
-                            new SiteViewModel(site)
-                            {
-                                NbUtilisateurs = site.Personnels.Count
-                            }
-                        );
-                        break;
-                    case "reservation":
-                        var nbResa = 0;
-                        foreach (var v in site.Vehicules)
+                    sites.Add(
+                        new SiteViewModel(site)
                         {
-                            nbResa += v.Reservations.Count;
-                        }
-
-                        sites.Add(new SiteViewModel(site)
-                        {
-                            NbReservations = nbResa
+                            NbUtilisateurs = site.Personnels.Count
                         }
                     );
-                        break;
-                    case "vehicule":
-                        sites.Add(
-                            new SiteViewModel(site)
-                            {
-                                NbVehicules = site.Vehicules.Count
-                            }
-                        );
-                        break;
                 }
+                else if (typePage == "reservation" || typePage == "all")
+                {
+                    var nbResa = 0;
+                    foreach (var v in site.Vehicules)
+                    {
+                        nbResa += v.Reservations.Count;
+                    }
 
+                    sites.Add(new SiteViewModel(site)
+                    {
+                        NbReservations = nbResa
+                    }
+                );
+                }
+                else if (typePage == "vehicule" || typePage == "all")
+                {
+                    sites.Add(
+                        new SiteViewModel(site)
+                        {
+                            NbVehicules = site.Vehicules.Count
+                        }
+                    );
+                }
             }
             return sites;
         }
