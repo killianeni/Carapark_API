@@ -1,13 +1,14 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace KMAP_API.Controllers
 {
@@ -18,9 +19,12 @@ namespace KMAP_API.Controllers
     {
         private readonly KmapContext _context;
 
-        public ReservationsController(KmapContext context)
+        private readonly ILogger<ReservationsController> _logger;
+
+        public ReservationsController(KmapContext context, ILogger<ReservationsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Reservations/GetReservationsBySite
@@ -28,17 +32,36 @@ namespace KMAP_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsBySite(Guid idSite)
         {
-            var r = new List<ReservationViewModel>();
-            foreach (var reservation in await _context.Reservation
-                .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
-                .Include(r => r.Utilisateur).ThenInclude(u => u.Role)
-                .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
-                .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise).Where(r => r.Vehicule.Site.Id == idSite)
-                .Include(r => r.Cle).ToListAsync())
+            try
             {
-                r.Add(new ReservationViewModel(reservation));
+                var r = new List<ReservationViewModel>();
+                foreach (var reservation in await _context.Reservation
+                    .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
+                    .Include(r => r.Utilisateur).ThenInclude(u => u.Role)
+                    .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
+                    .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise).Where(r => r.Vehicule.Site.Id == idSite)
+                    .Include(r => r.Cle).ToListAsync())
+                {
+                    r.Add(new ReservationViewModel(reservation));
+                }
+
+                if (r.Count > 0)
+                {
+                    _logger.LogInformation("GetReservationsBySite : ok");
+                }
+                else
+                {
+                    _logger.LogInformation("GetReservationsBySite : Pas de réservation trouvée");
+                }
+
+                return r;
             }
-            return r;
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "GetReservationsBySite error at {Time}", DateTime.UtcNow);
+                throw;
+            }
+
         }
 
         // GET: api/Reservations/GetReservationsBySiteAndDate

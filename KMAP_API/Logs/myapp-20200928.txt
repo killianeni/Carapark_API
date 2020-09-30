@@ -1,0 +1,82 @@
+2020-09-28T16:30:02.5045563+02:00  [INF] User profile is available. Using '"C:\Users\Killian\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest. (7ac5e29c)
+2020-09-28T16:30:05.4169292+02:00  [INF] Now listening on: "https://localhost:5001" (d826f4b8)
+2020-09-28T16:30:05.4196926+02:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2020-09-28T16:30:05.4224677+02:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2020-09-28T16:30:05.4247883+02:00  [INF] Hosting environment: "Development" (c3307c92)
+2020-09-28T16:30:05.4269575+02:00  [INF] Content root path: "D:\source\KMAP_BACK\KMAP_API" (b5d60022)
+2020-09-28T16:30:08.7328127+02:00 0HM33NBV6Q7US:00000001 [INF] Request starting HTTP/2 GET https://localhost:5001/swagger/index.html   (ca22a1cb)
+2020-09-28T16:30:09.4222577+02:00 0HM33NBV6Q7US:00000001 [INF] Request finished in 692.664ms 200 text/html;charset=utf-8 (791a596a)
+2020-09-28T16:30:09.7616582+02:00 0HM33NBV6Q7US:00000003 [INF] Request starting HTTP/2 GET https://localhost:5001/swagger/v1/swagger.json   (ca22a1cb)
+2020-09-28T16:30:09.9512743+02:00 0HM33NBV6Q7US:00000003 [INF] Request finished in 189.7524ms 200 application/json;charset=utf-8 (791a596a)
+2020-09-28T16:30:17.0927094+02:00 0HM33NBV6Q7UU:00000001 [INF] Request starting HTTP/1.1 GET https://localhost:5001/api/Reservations/GetReservationsBySite/6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423   (ca22a1cb)
+2020-09-28T16:30:17.6342678+02:00 0HM33NBV6Q7UU:00000001 [INF] Successfully validated the token. (60169667)
+2020-09-28T16:30:17.6392722+02:00 0HM33NBV6Q7UU:00000001 [INF] Authorization was successful. (0d575a54)
+2020-09-28T16:30:17.6397056+02:00 0HM33NBV6Q7UU:00000001 [INF] Executing endpoint '"KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)"' (500cc934)
+2020-09-28T16:30:17.7180851+02:00 0HM33NBV6Q7UU:00000001 [INF] Route matched with "{action = \"GetReservationsBySite\", controller = \"Reservations\"}". Executing controller action with signature "System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[KMAP_API.ViewModels.ReservationViewModel]]] GetReservationsBySite(System.Guid)" on controller "KMAP_API.Controllers.ReservationsController" ("KMAP_API"). (122b2fdf)
+2020-09-28T16:30:19.7073972+02:00 0HM33NBV6Q7UU:00000001 [INF] Entity Framework Core "3.1.7" initialized '"KmapContext"' using provider '"Npgsql.EntityFrameworkCore.PostgreSQL"' with options: "None" (9958f5bb)
+2020-09-28T16:30:20.9825321+02:00 0HM33NBV6Q7UU:00000001 [INF] Executed DbCommand ("15"ms) [Parameters=["@__idSite_0='?' (DbType = Guid)"], CommandType='Text', CommandTimeout='30']"
+""SELECT r.\"Id\", r.\"CleId\", r.\"ConfirmationCle\", r.\"DateDebut\", r.\"DateFin\", r.\"Description\", r.\"IsAccepted\", r.\"IsRejeted\", r.\"SiteDestination\", r.\"UtilisateurId\", r.\"VehiculeId\", t.\"Id\", t.\"Discriminator\", t.\"Mail\", t.\"Nom\", t.\"Permis\", t.\"Prenom\", t.\"SiteId\", t.\"Password\", t.\"RoleId\", r0.\"Id\", r0.\"Libelle\", v.\"Id\", v.\"Actif\", v.\"Modele\", v.\"NbPlaces\", v.\"NbPortes\", v.\"NumImmat\", v.\"SiteId\", v.\"TypeCarbu\", s.\"Id\", s.\"EntrepriseId\", s.\"Libelle\", e.\"Id\", e.\"Libelle\", c.\"Id\", c.\"Libelle\", c.\"VehiculeId\", t1.\"PersonnelId\", t1.\"ReservationID\", t1.\"Id\", t1.\"Discriminator\", t1.\"Mail\", t1.\"Nom\", t1.\"Permis\", t1.\"Prenom\", t1.\"SiteId\", t1.\"Password\", t1.\"RoleId\", c0.\"Id\", c0.\"Libelle\", c0.\"VehiculeId\"
+FROM \"Reservation\" AS r
+LEFT JOIN \"Vehicule\" AS v ON r.\"VehiculeId\" = v.\"Id\"
+LEFT JOIN \"Site\" AS s ON v.\"SiteId\" = s.\"Id\"
+LEFT JOIN (
+    SELECT p.\"Id\", p.\"Discriminator\", p.\"Mail\", p.\"Nom\", p.\"Permis\", p.\"Prenom\", p.\"SiteId\", p.\"Password\", p.\"RoleId\"
+    FROM \"Personnel\" AS p
+    WHERE p.\"Discriminator\" = 'Utilisateur'
+) AS t ON r.\"UtilisateurId\" = t.\"Id\"
+LEFT JOIN \"Role\" AS r0 ON t.\"RoleId\" = r0.\"Id\"
+LEFT JOIN \"Entreprise\" AS e ON s.\"EntrepriseId\" = e.\"Id\"
+LEFT JOIN \"Cle\" AS c ON r.\"CleId\" = c.\"Id\"
+LEFT JOIN (
+    SELECT p0.\"PersonnelId\", p0.\"ReservationID\", t0.\"Id\", t0.\"Discriminator\", t0.\"Mail\", t0.\"Nom\", t0.\"Permis\", t0.\"Prenom\", t0.\"SiteId\", t0.\"Password\", t0.\"RoleId\"
+    FROM \"Personnel_Reservations\" AS p0
+    INNER JOIN (
+        SELECT p1.\"Id\", p1.\"Discriminator\", p1.\"Mail\", p1.\"Nom\", p1.\"Permis\", p1.\"Prenom\", p1.\"SiteId\", p1.\"Password\", p1.\"RoleId\"
+        FROM \"Personnel\" AS p1
+        WHERE p1.\"Discriminator\" IN ('Personnel', 'Utilisateur')
+    ) AS t0 ON p0.\"PersonnelId\" = t0.\"Id\"
+) AS t1 ON r.\"Id\" = t1.\"ReservationID\"
+LEFT JOIN \"Cle\" AS c0 ON v.\"Id\" = c0.\"VehiculeId\"
+WHERE s.\"Id\" = @__idSite_0
+ORDER BY r.\"Id\", t1.\"PersonnelId\", t1.\"ReservationID\", t1.\"Id\", c0.\"Id\"" (0723d8ff)
+2020-09-28T16:30:21.2029349+02:00 0HM33NBV6Q7UU:00000001 [INF] GetReservationsBySite : ok (46c104e0)
+2020-09-28T16:30:21.2092456+02:00 0HM33NBV6Q7UU:00000001 [INF] Executing ObjectResult, writing value of type '"System.Collections.Generic.List`1[[KMAP_API.ViewModels.ReservationViewModel, KMAP_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"'. (8a1b66c8)
+2020-09-28T16:30:21.2495410+02:00 0HM33NBV6Q7UU:00000001 [INF] Executed action "KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)" in 3525.9001ms (afa2e885)
+2020-09-28T16:30:21.2501991+02:00 0HM33NBV6Q7UU:00000001 [INF] Executed endpoint '"KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)"' (99874f2b)
+2020-09-28T16:30:21.2551644+02:00 0HM33NBV6Q7UU:00000001 [INF] Request finished in 4162.6841ms 200 application/json; charset=utf-8 (791a596a)
+2020-09-28T16:31:25.2953697+02:00 0HM33NBV6Q7UU:00000002 [INF] Request starting HTTP/1.1 GET https://localhost:5001/api/Reservations/GetReservationsBySite/6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423   (ca22a1cb)
+2020-09-28T16:31:25.2991796+02:00 0HM33NBV6Q7UU:00000002 [INF] Successfully validated the token. (60169667)
+2020-09-28T16:31:25.2995840+02:00 0HM33NBV6Q7UU:00000002 [INF] Authorization was successful. (0d575a54)
+2020-09-28T16:31:25.2996931+02:00 0HM33NBV6Q7UU:00000002 [INF] Executing endpoint '"KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)"' (500cc934)
+2020-09-28T16:31:25.3000558+02:00 0HM33NBV6Q7UU:00000002 [INF] Route matched with "{action = \"GetReservationsBySite\", controller = \"Reservations\"}". Executing controller action with signature "System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[KMAP_API.ViewModels.ReservationViewModel]]] GetReservationsBySite(System.Guid)" on controller "KMAP_API.Controllers.ReservationsController" ("KMAP_API"). (122b2fdf)
+2020-09-28T16:31:25.3371478+02:00 0HM33NBV6Q7UU:00000002 [INF] Entity Framework Core "3.1.7" initialized '"KmapContext"' using provider '"Npgsql.EntityFrameworkCore.PostgreSQL"' with options: "None" (9958f5bb)
+2020-09-28T16:31:25.3508366+02:00 0HM33NBV6Q7UU:00000002 [INF] Executed DbCommand ("7"ms) [Parameters=["@__idSite_0='?' (DbType = Guid)"], CommandType='Text', CommandTimeout='30']"
+""SELECT r.\"Id\", r.\"CleId\", r.\"ConfirmationCle\", r.\"DateDebut\", r.\"DateFin\", r.\"Description\", r.\"IsAccepted\", r.\"IsRejeted\", r.\"SiteDestination\", r.\"UtilisateurId\", r.\"VehiculeId\", t.\"Id\", t.\"Discriminator\", t.\"Mail\", t.\"Nom\", t.\"Permis\", t.\"Prenom\", t.\"SiteId\", t.\"Password\", t.\"RoleId\", r0.\"Id\", r0.\"Libelle\", v.\"Id\", v.\"Actif\", v.\"Modele\", v.\"NbPlaces\", v.\"NbPortes\", v.\"NumImmat\", v.\"SiteId\", v.\"TypeCarbu\", s.\"Id\", s.\"EntrepriseId\", s.\"Libelle\", e.\"Id\", e.\"Libelle\", c.\"Id\", c.\"Libelle\", c.\"VehiculeId\", t1.\"PersonnelId\", t1.\"ReservationID\", t1.\"Id\", t1.\"Discriminator\", t1.\"Mail\", t1.\"Nom\", t1.\"Permis\", t1.\"Prenom\", t1.\"SiteId\", t1.\"Password\", t1.\"RoleId\", c0.\"Id\", c0.\"Libelle\", c0.\"VehiculeId\"
+FROM \"Reservation\" AS r
+LEFT JOIN \"Vehicule\" AS v ON r.\"VehiculeId\" = v.\"Id\"
+LEFT JOIN \"Site\" AS s ON v.\"SiteId\" = s.\"Id\"
+LEFT JOIN (
+    SELECT p.\"Id\", p.\"Discriminator\", p.\"Mail\", p.\"Nom\", p.\"Permis\", p.\"Prenom\", p.\"SiteId\", p.\"Password\", p.\"RoleId\"
+    FROM \"Personnel\" AS p
+    WHERE p.\"Discriminator\" = 'Utilisateur'
+) AS t ON r.\"UtilisateurId\" = t.\"Id\"
+LEFT JOIN \"Role\" AS r0 ON t.\"RoleId\" = r0.\"Id\"
+LEFT JOIN \"Entreprise\" AS e ON s.\"EntrepriseId\" = e.\"Id\"
+LEFT JOIN \"Cle\" AS c ON r.\"CleId\" = c.\"Id\"
+LEFT JOIN (
+    SELECT p0.\"PersonnelId\", p0.\"ReservationID\", t0.\"Id\", t0.\"Discriminator\", t0.\"Mail\", t0.\"Nom\", t0.\"Permis\", t0.\"Prenom\", t0.\"SiteId\", t0.\"Password\", t0.\"RoleId\"
+    FROM \"Personnel_Reservations\" AS p0
+    INNER JOIN (
+        SELECT p1.\"Id\", p1.\"Discriminator\", p1.\"Mail\", p1.\"Nom\", p1.\"Permis\", p1.\"Prenom\", p1.\"SiteId\", p1.\"Password\", p1.\"RoleId\"
+        FROM \"Personnel\" AS p1
+        WHERE p1.\"Discriminator\" IN ('Personnel', 'Utilisateur')
+    ) AS t0 ON p0.\"PersonnelId\" = t0.\"Id\"
+) AS t1 ON r.\"Id\" = t1.\"ReservationID\"
+LEFT JOIN \"Cle\" AS c0 ON v.\"Id\" = c0.\"VehiculeId\"
+WHERE s.\"Id\" = @__idSite_0
+ORDER BY r.\"Id\", t1.\"PersonnelId\", t1.\"ReservationID\", t1.\"Id\", c0.\"Id\"" (0723d8ff)
+2020-09-28T16:31:25.3554322+02:00 0HM33NBV6Q7UU:00000002 [INF] GetReservationsBySite : ok (46c104e0)
+2020-09-28T16:31:25.3561362+02:00 0HM33NBV6Q7UU:00000002 [INF] Executing ObjectResult, writing value of type '"System.Collections.Generic.List`1[[KMAP_API.ViewModels.ReservationViewModel, KMAP_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"'. (8a1b66c8)
+2020-09-28T16:31:25.3568544+02:00 0HM33NBV6Q7UU:00000002 [INF] Executed action "KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)" in 56.7033ms (afa2e885)
+2020-09-28T16:31:25.3569370+02:00 0HM33NBV6Q7UU:00000002 [INF] Executed endpoint '"KMAP_API.Controllers.ReservationsController.GetReservationsBySite (KMAP_API)"' (99874f2b)
+2020-09-28T16:31:25.3573479+02:00 0HM33NBV6Q7UU:00000002 [INF] Request finished in 62.1692ms 200 application/json; charset=utf-8 (791a596a)

@@ -1,4 +1,8 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using KMAP_API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,10 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
 
 namespace KMAP_API
 {
