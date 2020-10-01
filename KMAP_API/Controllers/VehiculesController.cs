@@ -1,17 +1,17 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user, admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class VehiculesController : ControllerBase
