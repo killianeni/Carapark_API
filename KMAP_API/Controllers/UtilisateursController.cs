@@ -1,13 +1,13 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -87,6 +87,49 @@ namespace KMAP_API.Controllers
             utilisateur.Update(utilisateurVM);
 
             _context.Entry(utilisateur).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UtilisateurExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok();
+        }
+
+        // PUT: api/Utilisateurs/Password/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "user,admin,super-admin")]
+        [HttpPut("Password/{id}/{oldPass}/{newPass}")]
+        public async Task<IActionResult> Password(Guid id, string oldPass, string newPass)
+        {
+            if (!_context.Utilisateur.Any(u => u.Id == id))
+            {
+                return BadRequest();
+            }
+
+            var utilisateur = _context.Utilisateur.FirstOrDefault(u => u.Id == id);
+
+            if (BCrypt.Net.BCrypt.Verify(oldPass, utilisateur.Password))
+            {
+                utilisateur.Password = BCrypt.Net.BCrypt.HashPassword(newPass);
+                _context.Entry(utilisateur).State = EntityState.Modified;
+            }
+            else
+            {
+                return BadRequest();
+            }
 
             try
             {
