@@ -1,5 +1,5 @@
-﻿using KMAP_API.Models;
-using System;
+﻿using System;
+using KMAP_API.Models;
 
 namespace KMAP_API.ViewModels
 {
@@ -14,6 +14,8 @@ namespace KMAP_API.ViewModels
         public string Mail { get; set; }
 
         public string Permis { get; set; }
+
+        public Guid SiteId { get; set; }
 
         public PersonnelViewModel()
         {

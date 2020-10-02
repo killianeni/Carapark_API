@@ -83,6 +83,11 @@ namespace KMAP_API.Controllers
                 var role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id);
                 utilisateur.Role = role;
             }
+            if (utilisateurVM.ResetPass)
+            {
+                utilisateur.Password = BCrypt.Net.BCrypt.HashPassword(utilisateurVM.Password);
+            }
+
 
             utilisateur.Update(utilisateurVM);
 
@@ -150,16 +155,22 @@ namespace KMAP_API.Controllers
             return Ok();
         }
 
-        // POST: api/Utilisateurs
+        // POST: api/UpUtilisateur
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
+        [HttpPost("UpUtilisateur")]
         public async Task<ActionResult<Utilisateur>> UpUtilisateur(UtilisateurViewModel utilisateurVM)
         {
-            var utilisateur = (Utilisateur)_context.Personnel.FirstOrDefault(p => p.Id == utilisateurVM.Id);
-            utilisateur.Role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id);
+            var personne = _context.Personnel.Include(p => p.Site).Include(p => p.Personnel_Reservations).FirstOrDefault(p => p.Id == utilisateurVM.Id);
 
-            _context.Entry(utilisateur).State = EntityState.Modified;
+            var utilisateur = new Utilisateur(personne)
+            {
+                Role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id),
+                Password = BCrypt.Net.BCrypt.HashPassword(utilisateurVM.Password)
+            };
+
+            _context.Personnel.Remove(personne);
+            _context.Utilisateur.Add(utilisateur);
 
             await _context.SaveChangesAsync();
 

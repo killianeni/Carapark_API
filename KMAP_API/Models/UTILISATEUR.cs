@@ -13,5 +13,16 @@ namespace KMAP_API.Models
         {
 
         }
+
+        public Utilisateur(Personnel p) : base()
+        {
+            Id = p.Id;
+            Prenom = p.Prenom;
+            Nom = p.Nom;
+            Mail = p.Mail;
+            Permis = p.Permis;
+            Site = p.Site;
+            Personnel_Reservations = p.Personnel_Reservations;
+        }
     }
 }
