@@ -29,7 +29,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<NotificationViewModel>>> GetNotificationsByUser(Guid idUser)
         {
             var n = new List<NotificationViewModel>();
-            foreach (var notification in await _context.Notification.Include(n => n.Utilisateur).Where(n => n.Utilisateur.Id == idUser).Include(n => n.Reservation).ToListAsync())
+            foreach (var notification in await _context.Notification
+                                                .Include(n => n.Utilisateur)
+                                                .Include(n => n.Reservation)
+                                                .Where(n => n.Utilisateur.Id == idUser)
+                                                .OrderBy(n => n.DateNotif)
+                                                .ToListAsync())
             {
                 n.Add(new NotificationViewModel(notification));
             }
@@ -43,9 +48,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<NotificationViewModel>>> GetNotificationsByReservation(Guid idReservation)
         {
             var n = new List<NotificationViewModel>();
-            foreach (var notification in await _context.Notification.Include(n => n.Utilisateur)
-                .Include(n => n.Reservation).Where(n => n.Reservation.Id == idReservation)
-                .OrderBy(n => n.DateNotif).ToListAsync())
+            foreach (var notification in await _context.Notification
+                                                .Include(n => n.Utilisateur)
+                                                .Include(n => n.Reservation)
+                                                .Where(n => n.Reservation.Id == idReservation)
+                                                .OrderBy(n => n.DateNotif)
+                                                .ToListAsync())
             {
                 n.Add(new NotificationViewModel(notification));
             }

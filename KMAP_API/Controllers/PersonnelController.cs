@@ -31,7 +31,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<PersonnelViewModel>>> GetPersonnelsBySite(Guid idSite)
         {
             var listP = new List<PersonnelViewModel>();
-            foreach (var personnel in await _context.Personnel.Include(p => p.Site).ThenInclude(p => p.Entreprise).Where(p => p.Site.Id == idSite).ToListAsync())
+            foreach (var personnel in await _context.Personnel
+                                                .Include(p => p.Site)
+                                                .ThenInclude(p => p.Entreprise)
+                                                .Where(p => p.Site.Id == idSite)
+                                                .OrderBy(p => p.Nom).ThenBy(p => p.Prenom)
+                                                .ToListAsync())
             {
                 listP.Add(new PersonnelViewModel(personnel));
             }

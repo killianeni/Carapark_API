@@ -29,7 +29,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbyEntreprise(Guid id)
         {
             var u = new List<UtilisateurViewModel>();
-            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Entreprise.Id == id).ToListAsync())
+            foreach (var utilisateur in await _context.Utilisateur
+                                                .Include(u => u.Role)
+                                                .Include(u => u.Site).ThenInclude(u => u.Entreprise)
+                                                .Where(u => u.Site.Entreprise.Id == id)
+                                                .OrderByDescending(u => u.Role).ThenBy(u => u.Nom).ThenBy(u => u.Prenom)
+                                                .ToListAsync())
             {
                 u.Add(new UtilisateurViewModel(utilisateur));
             }
@@ -42,7 +47,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<UtilisateurViewModel>>> GetUtilisateursbySite(Guid id)
         {
             var u = new List<UtilisateurViewModel>();
-            foreach (var utilisateur in await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Site.Id == id).ToListAsync())
+            foreach (var utilisateur in await _context.Utilisateur
+                                                .Include(u => u.Role)
+                                                .Include(u => u.Site).ThenInclude(u => u.Entreprise)
+                                                .Where(u => u.Site.Id == id)
+                                                .OrderByDescending(u => u.Role).ThenBy(u => u.Nom).ThenBy(u => u.Prenom)
+                                                .ToListAsync())
             {
                 u.Add(new UtilisateurViewModel(utilisateur));
             }
@@ -54,7 +64,10 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UtilisateurViewModel>> GetUtilisateur(Guid id)
         {
-            var utilisateur = new UtilisateurViewModel(await _context.Utilisateur.Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).FirstOrDefaultAsync(u => u.Id == id));
+            var utilisateur = new UtilisateurViewModel(await _context.Utilisateur
+                                                                .Include(u => u.Role)
+                                                                .Include(u => u.Site).ThenInclude(u => u.Entreprise)
+                                                                .FirstOrDefaultAsync(u => u.Id == id));
 
             if (utilisateur == null)
             {

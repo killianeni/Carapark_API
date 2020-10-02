@@ -28,7 +28,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesBySite(Guid id)
         {
             var v = new List<VehiculeViewModel>();
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule
+                                            .Where(v => v.Site.Id == id)
+                                            .Include(v => v.Cles)
+                                            .Include(v => v.Site)
+                                            .OrderByDescending(v => v.Actif).ThenByDescending(v => v.NbPlaces)
+                                            .ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -43,7 +48,12 @@ namespace KMAP_API.Controllers
         {
             var v = new List<VehiculeViewModel>();
             var listeVehiculeReserve = ListeVehiculeReserve(dateDebut, dateFin);
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id)).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule
+                                            .Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id) && v.Actif)
+                                            .Include(v => v.Cles)
+                                            .Include(v => v.Site)
+                                            .OrderByDescending(v => v.NbPlaces)
+                                            .ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -62,7 +72,10 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VehiculeViewModel>> GetVehicule(Guid id)
         {
-            var vehicule = new VehiculeViewModel(await _context.Vehicule.Include(v => v.Cles).Include(v => v.Site).FirstOrDefaultAsync(v => v.Id == id));
+            var vehicule = new VehiculeViewModel(await _context.Vehicule
+                                                        .Include(v => v.Cles)
+                                                        .Include(v => v.Site)
+                                                        .FirstOrDefaultAsync(v => v.Id == id));
 
             if (vehicule == null)
             {
