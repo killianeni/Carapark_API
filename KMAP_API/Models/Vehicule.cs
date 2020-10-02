@@ -28,7 +28,7 @@ namespace KMAP_API.Models
 
         public ICollection<Reservation> Reservations { get; set; }
 
-        public ICollection<Cle> Cles { get; set; }
+        public ICollection<Cle> Cles { get; set; } = new List<Cle>();
 
         public Vehicule()
         {
