@@ -1,17 +1,17 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user, admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class VehiculesController : ControllerBase
@@ -28,7 +28,12 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesBySite(Guid id)
         {
             var v = new List<VehiculeViewModel>();
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule
+                                            .Where(v => v.Site.Id == id)
+                                            .Include(v => v.Cles)
+                                            .Include(v => v.Site)
+                                            .OrderByDescending(v => v.Actif).ThenByDescending(v => v.NbPlaces)
+                                            .ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -43,7 +48,12 @@ namespace KMAP_API.Controllers
         {
             var v = new List<VehiculeViewModel>();
             var listeVehiculeReserve = ListeVehiculeReserve(dateDebut, dateFin);
-            foreach (var vehicule in await _context.Vehicule.Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id)).Include(v => v.Cles).Include(v => v.Site).ToListAsync())
+            foreach (var vehicule in await _context.Vehicule
+                                            .Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id) && v.Actif)
+                                            .Include(v => v.Cles)
+                                            .Include(v => v.Site)
+                                            .OrderByDescending(v => v.NbPlaces)
+                                            .ToListAsync())
             {
                 v.Add(new VehiculeViewModel(vehicule));
             }
@@ -62,7 +72,10 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VehiculeViewModel>> GetVehicule(Guid id)
         {
-            var vehicule = new VehiculeViewModel(await _context.Vehicule.Include(v => v.Cles).Include(v => v.Site).FirstOrDefaultAsync(v => v.Id == id));
+            var vehicule = new VehiculeViewModel(await _context.Vehicule
+                                                        .Include(v => v.Cles)
+                                                        .Include(v => v.Site)
+                                                        .FirstOrDefaultAsync(v => v.Id == id));
 
             if (vehicule == null)
             {
@@ -129,7 +142,7 @@ namespace KMAP_API.Controllers
             var site = _context.Site.FirstOrDefault(s => s.Id == vehiculeVM.IdSite);
 
             var cles = new List<Cle>();
-            if(vehiculeVM.Cles.Count > 0)
+            if (vehiculeVM.Cles.Count > 0)
             {
                 foreach (var cleVM in vehiculeVM.Cles)
                 {
@@ -184,7 +197,10 @@ namespace KMAP_API.Controllers
 
         private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
         {
-            return _context.Reservation.Where(r => (r.DateFin >= dateDebut && r.DateFin <= dateFin) || (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) || (r.DateDebut <= dateDebut && r.DateFin >= dateFin)).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
+            return _context.Reservation.Where(r =>
+                (r.DateFin >= dateDebut && r.DateFin <= dateFin) ||
+                (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) ||
+                (r.DateDebut <= dateDebut && r.DateFin >= dateFin) && r.IsRejeted == false).Include(r => r.Vehicule).Select(r => r.Vehicule.Id).ToHashSet();
         }
 
         #endregion

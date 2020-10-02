@@ -1,13 +1,13 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -30,52 +30,50 @@ namespace KMAP_API.Controllers
         {
             var sites = new List<SiteViewModel>();
 
-            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).ToListAsync();
+            var siteRequest = await _context.Site
+                                        .Include(s => s.Entreprise)
+                                        .Include(s => s.Personnels)
+                                        .Include(s => s.Vehicules).ThenInclude(v => v.Reservations)
+                                        .Where(s => s.Entreprise.Id == id)
+                                        .OrderBy(s => s.Libelle)
+                                        .ToListAsync();
 
             foreach (var site in siteRequest)
             {
-                switch (typePage)
+                var sitVM = new SiteViewModel(site);
+                if (typePage == "utilisateur" || typePage == "all")
                 {
-                    case "utilisateur":
-                        sites.Add(
-                            new SiteViewModel(site)
-                            {
-                                NbUtilisateurs = site.Personnels.Count
-                            }
-                        );
-                        break;
-                    case "reservation":
-                        var nbResa = 0;
-                        foreach (var v in site.Vehicules)
-                        {
-                            nbResa += v.Reservations.Count;
-                        }
-
-                        sites.Add(new SiteViewModel(site)
-                        {
-                            NbReservations = nbResa
-                        }
-                    );
-                        break;
-                    case "vehicule":
-                        sites.Add(
-                            new SiteViewModel(site)
-                            {
-                                NbVehicules = site.Vehicules.Count
-                            }
-                        );
-                        break;
+                    sitVM.NbUtilisateurs = await _context.Utilisateur
+                                                    .Include(u => u.Site)
+                                                    .CountAsync(u => u.Site.Id == site.Id);
                 }
+                if (typePage == "reservation" || typePage == "all")
+                {
+                    var nbResa = 0;
+                    foreach (var v in site.Vehicules)
+                    {
+                        nbResa += v.Reservations.Count;
+                    }
 
+                    sitVM.NbReservations = nbResa;
+                }
+                if (typePage == "all")
+                {
+                    sitVM.NbVehicules = site.Vehicules.Count;
+                }
+                sites.Add(sitVM);
             }
             return sites;
         }
 
         // GET: api/Sites/5
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<SiteViewModel>> GetSite(Guid id)
         {
-            return new SiteViewModel(await _context.Site.Where(s => s.Id == id).Include(s => s.Entreprise).FirstOrDefaultAsync());
+            return new SiteViewModel(await _context.Site
+                                            .Where(s => s.Id == id)
+                                            .Include(s => s.Entreprise)
+                                            .FirstOrDefaultAsync());
         }
 
         // PUT: api/Sites/5

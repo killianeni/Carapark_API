@@ -319,15 +319,15 @@ INSERT INTO public."Role"("Id", "Libelle") VALUES ('4a3b872b-ae9f-4b04-89ca-ddbb
 
 -- Personnel
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('27a51826-0f74-42f0-b3a7-3f51246545e6', 'BON', 'Jean', 'jean.bon@eni.fr', 'pochetteSurprise1', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '123456', 'a4828836-eff3-4151-b1b9-ab5d6a3cd3ca');
+	VALUES ('27a51826-0f74-42f0-b3a7-3f51246545e6', 'BON', 'Jean', 'jean.bon@eni.fr', 'pochetteSurprise1', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '$2y$12$S4g.mojd0kh.bRk2uCxBL.GX3zR2jZ1tQWBLokzVPAzjcEAa.ipve', 'a4828836-eff3-4151-b1b9-ab5d6a3cd3ca');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', 'LAFOND', 'Michel', 'michel.lafond@eni.fr', 'pochetteSurprise2', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
+	VALUES ('dfdb5d6a-540b-4aea-a61e-ff18d44cb8ff', 'LAFOND', 'Michel', 'michel.lafond@eni.fr', 'pochetteSurprise2', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Utilisateur', '$2y$12$S4g.mojd0kh.bRk2uCxBL.GX3zR2jZ1tQWBLokzVPAzjcEAa.ipve', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator")
 	VALUES ('62b473a0-91f0-4e6f-bea7-1953ac199157', 'ALAPLAGE', 'Martine', 'martine.alaplage@eni.fr', 'trotinette', '6b6d75b0-0a7f-4ef4-89ce-e6f671d6f423', 'Personnel');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('f39ebf9d-cb2e-40ff-8885-48bddbb829c9', 'MINET', 'Pierre', 'pierre.minet@eni.fr', 'pochetteSurprise3', '0d441381-e25a-4486-a910-ab3bedeb47ea', 'Utilisateur', '123456', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
+	VALUES ('f39ebf9d-cb2e-40ff-8885-48bddbb829c9', 'MINET', 'Pierre', 'pierre.minet@eni.fr', 'pochetteSurprise3', '0d441381-e25a-4486-a910-ab3bedeb47ea', 'Utilisateur', '$2y$12$S4g.mojd0kh.bRk2uCxBL.GX3zR2jZ1tQWBLokzVPAzjcEAa.ipve', '5280a0cb-71ed-4757-b1fd-f3f595dee92b');
 INSERT INTO public."Personnel"( "Id", "Nom", "Prenom", "Mail", "Permis", "SiteId", "Discriminator", "Password", "RoleId")
-	VALUES ('5151123e-725b-447c-a11a-ac1728c0f595', 'admin', 'kmap', 'kmap.admin@kmap.fr', 'fusée', '9c60d56a-aef1-412f-a8c4-11d480432153', 'Utilisateur', 'kmap_pass', '4a3b872b-ae9f-4b04-89ca-ddbb26e2dc25');
+	VALUES ('5151123e-725b-447c-a11a-ac1728c0f595', 'admin', 'kmap', 'kmap.admin@kmap.fr', 'fusée', '9c60d56a-aef1-412f-a8c4-11d480432153', 'Utilisateur', '$2y$12$YsfgI2N5Z.eA8uVezGpXWObWcsBfwjFiWne/qWm1NE6UGVcnJYh2i', '4a3b872b-ae9f-4b04-89ca-ddbb26e2dc25');
 
 -- Reservation
 
