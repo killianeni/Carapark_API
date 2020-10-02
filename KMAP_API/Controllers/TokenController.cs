@@ -74,7 +74,12 @@ namespace KMAP_API.Controllers
 
         private async Task<Utilisateur> GetUser(string email, string password)
         {
-            var users = await _context.Utilisateur.Include(u => u.Role).Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Mail == email).ToListAsync();
+            var users = await _context.Utilisateur
+                                .Include(u => u.Role)
+                                .Include(u => u.Role)
+                                .Include(u => u.Site).ThenInclude(s => s.Entreprise)
+                                .Where(u => u.Mail == email)
+                                .ToListAsync();
             foreach (var user in users)
             {
                 if (BCrypt.Net.BCrypt.Verify(password, user.Password))

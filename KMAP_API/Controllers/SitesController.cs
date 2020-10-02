@@ -30,14 +30,22 @@ namespace KMAP_API.Controllers
         {
             var sites = new List<SiteViewModel>();
 
-            var siteRequest = await _context.Site.Include(s => s.Entreprise).Where(s => s.Entreprise.Id == id).Include(u => u.Personnels).Include(u => u.Vehicules).ThenInclude(v => v.Reservations).OrderBy(s => s.Libelle).ToListAsync();
+            var siteRequest = await _context.Site
+                                        .Include(s => s.Entreprise)
+                                        .Include(s => s.Personnels)
+                                        .Include(s => s.Vehicules).ThenInclude(v => v.Reservations)
+                                        .Where(s => s.Entreprise.Id == id)
+                                        .OrderBy(s => s.Libelle)
+                                        .ToListAsync();
 
             foreach (var site in siteRequest)
             {
                 var sitVM = new SiteViewModel(site);
                 if (typePage == "utilisateur" || typePage == "all")
                 {
-                    sitVM.NbUtilisateurs = site.Personnels.Count;
+                    sitVM.NbUtilisateurs = await _context.Utilisateur
+                                                    .Include(u => u.Site)
+                                                    .CountAsync(u => u.Site.Id == site.Id);
                 }
                 if (typePage == "reservation" || typePage == "all")
                 {
@@ -62,7 +70,10 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SiteViewModel>> GetSite(Guid id)
         {
-            return new SiteViewModel(await _context.Site.Where(s => s.Id == id).Include(s => s.Entreprise).FirstOrDefaultAsync());
+            return new SiteViewModel(await _context.Site
+                                            .Where(s => s.Id == id)
+                                            .Include(s => s.Entreprise)
+                                            .FirstOrDefaultAsync());
         }
 
         // PUT: api/Sites/5

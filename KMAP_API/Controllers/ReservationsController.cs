@@ -34,6 +34,7 @@ namespace KMAP_API.Controllers
                 .Include(r => r.Utilisateur).ThenInclude(u => u.Role)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise).Where(r => r.Vehicule.Site.Id == idSite)
+                .OrderBy(r => r.IsRejeted).ThenBy(r => r.ConfirmationCle).ThenBy(r => r.IsAccepted).ThenByDescending(r => r.DateDebut)
                 .Include(r => r.Cle).ToListAsync())
             {
                 r.Add(new ReservationViewModel(reservation));
@@ -67,17 +68,18 @@ namespace KMAP_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReservationViewModel>>> GetReservationsByUser(Guid idUser)
         {
-            var r = new List<ReservationViewModel>();
+            var lr = new List<ReservationViewModel>();
             foreach (var reservation in await _context.Reservation
                 .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
                 .Include(r => r.Utilisateur).ThenInclude(u => u.Role).Where(u => u.Utilisateur.Id == idUser)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Site).ThenInclude(s => s.Entreprise)
                 .Include(r => r.Vehicule).ThenInclude(v => v.Cles)
+                .OrderByDescending(r => r.DateDebut).ThenBy(r => r.IsRejeted).ThenBy(r => r.ConfirmationCle).ThenBy(r => r.IsAccepted)
                 .Include(r => r.Cle).ToListAsync())
             {
-                r.Add(new ReservationViewModel(reservation));
+                lr.Add(new ReservationViewModel(reservation));
             }
-            return r;
+            return lr;
         }
 
         // GET: api/Reservations/GetFullReservedDays
@@ -123,7 +125,12 @@ namespace KMAP_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReservationViewModel>> GetReservation(Guid id)
         {
-            var reservation = new ReservationViewModel(await _context.Reservation.Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel).Include(r => r.Utilisateur).Include(r => r.Vehicule).Include(r => r.Cle).FirstOrDefaultAsync(r => r.Id == id));
+            var reservation = new ReservationViewModel(await _context.Reservation
+                                                                .Include(r => r.Personnel_Reservations).ThenInclude(pr => pr.Personnel)
+                                                                .Include(r => r.Utilisateur)
+                                                                .Include(r => r.Vehicule)
+                                                                .Include(r => r.Cle)
+                                                                .FirstOrDefaultAsync(r => r.Id == id));
 
             if (reservation == null)
             {
@@ -144,7 +151,10 @@ namespace KMAP_API.Controllers
                 return BadRequest();
             }
 
-            var reservation = _context.Reservation.Include(r => r.Utilisateur).Include(r => r.Personnel_Reservations).FirstOrDefault(r => r.Id == id);
+            var reservation = _context.Reservation
+                                .Include(r => r.Utilisateur)
+                                .Include(r => r.Personnel_Reservations)
+                                .FirstOrDefault(r => r.Id == id);
 
             CreateNotifications(reservation, reservationVM);
 
@@ -210,8 +220,12 @@ namespace KMAP_API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostReservation(ReservationViewModel reservationVM)
         {
-            Utilisateur u = _context.Utilisateur.Where(ut => ut.Id == reservationVM.Utilisateur.Id).FirstOrDefault();
-            Vehicule v = _context.Vehicule.Where(vh => vh.Id == reservationVM.Vehicule.Id).FirstOrDefault();
+            Utilisateur u = _context.Utilisateur
+                                .Where(ut => ut.Id == reservationVM.Utilisateur.Id)
+                                .FirstOrDefault();
+            Vehicule v = _context.Vehicule
+                                .Where(vh => vh.Id == reservationVM.Vehicule.Id)
+                                .FirstOrDefault();
             List<Personnel_Reservation> pr = new List<Personnel_Reservation>();
 
             foreach (var p in reservationVM.Personnels)
