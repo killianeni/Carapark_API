@@ -1,15 +1,16 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -73,7 +74,15 @@ namespace KMAP_API.Controllers
 
         private async Task<Utilisateur> GetUser(string email, string password)
         {
-            return await _context.Utilisateur.Include(u => u.Role).Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).FirstOrDefaultAsync(u => u.Mail == email && u.Password == password);
+            var users = await _context.Utilisateur.Include(u => u.Role).Include(u => u.Role).Include(u => u.Site).ThenInclude(u => u.Entreprise).Where(u => u.Mail == email).ToListAsync();
+            foreach (var user in users)
+            {
+                if (BCrypt.Net.BCrypt.Verify(password, user.Password))
+                {
+                    return user;
+                }
+            }
+            return null;
         }
     }
 }

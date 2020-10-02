@@ -1,13 +1,13 @@
-﻿using KMAP_API.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using KMAP_API.Data;
 using KMAP_API.Models;
 using KMAP_API.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KMAP_API.Controllers
 {
@@ -100,7 +100,8 @@ namespace KMAP_API.Controllers
                 Nom = personnelVM.Nom,
                 Prenom = personnelVM.Prenom,
                 Mail = personnelVM.Mail,
-                Permis = personnelVM.Permis
+                Permis = personnelVM.Permis,
+                Site = _context.Site.FirstOrDefault(s => s.Id == personnelVM.SiteId)
             };
 
             _context.Personnel.Add(personnel);

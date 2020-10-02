@@ -1,11 +1,14 @@
-﻿using KMAP_API.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using KMAP_API.Models;
 
 namespace KMAP_API.ViewModels
 {
     public class UtilisateurViewModel : PersonnelViewModel
     {
+        public string Password { get; set; }
+
+        public bool ResetPass { get; set; }
 
         public Guid IdEntreprise { get; set; }
 
