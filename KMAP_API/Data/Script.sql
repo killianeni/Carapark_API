@@ -35,8 +35,8 @@ CREATE TABLE public."Site"
     CONSTRAINT "PK_Site" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Site_Entreprise_EntrepriseId" FOREIGN KEY ("EntrepriseId")
         REFERENCES public."Entreprise" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 TABLESPACE pg_default;
 
@@ -57,8 +57,8 @@ CREATE TABLE public."Vehicule"
     CONSTRAINT "PK_Vehicule" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Vehicule_Site_SiteId" FOREIGN KEY ("SiteId")
         REFERENCES public."Site" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -75,8 +75,8 @@ CREATE TABLE public."Cle"
     CONSTRAINT "PK_Cle" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Cle_Vehicule_VehiculeId" FOREIGN KEY ("VehiculeId")
         REFERENCES public."Vehicule" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -112,12 +112,12 @@ CREATE TABLE public."Personnel"
     CONSTRAINT "PK_Personnel" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Personnel_Role_RoleId" FOREIGN KEY ("RoleId")
         REFERENCES public."Role" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT "FK_Personnel_Site_SiteId" FOREIGN KEY ("SiteId")
         REFERENCES public."Site" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -142,16 +142,16 @@ CREATE TABLE public."Reservation"
     CONSTRAINT "PK_Reservation" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Reservation_Cle_CleId" FOREIGN KEY ("CleId")
         REFERENCES public."Cle" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT "FK_Reservation_Personnel_UtilisateurId" FOREIGN KEY ("UtilisateurId")
         REFERENCES public."Personnel" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT "FK_Reservation_Vehicule_VehiculeId" FOREIGN KEY ("VehiculeId")
         REFERENCES public."Vehicule" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -172,12 +172,12 @@ CREATE TABLE public."Notification"
     CONSTRAINT "PK_Notification" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Notification_Personnel_UtilisateurId" FOREIGN KEY ("UtilisateurId")
         REFERENCES public."Personnel" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT,
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT "FK_Notification_Reservation_ReservationId" FOREIGN KEY ("ReservationId")
         REFERENCES public."Reservation" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -193,11 +193,11 @@ CREATE TABLE public."Personnel_Reservations"
     CONSTRAINT "PK_Personnel_Reservations" PRIMARY KEY ("PersonnelId", "ReservationID"),
     CONSTRAINT "FK_Personnel_Reservations_Personnel_PersonnelId" FOREIGN KEY ("PersonnelId")
         REFERENCES public."Personnel" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
+        ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT "FK_Personnel_Reservations_Reservation_ReservationID" FOREIGN KEY ("ReservationID")
         REFERENCES public."Reservation" ("Id") MATCH SIMPLE
-        ON UPDATE NO ACTION
+        ON UPDATE CASCADE
         ON DELETE CASCADE
 )
 

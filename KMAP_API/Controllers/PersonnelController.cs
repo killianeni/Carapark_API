@@ -44,6 +44,27 @@ namespace KMAP_API.Controllers
             return listP;
         }
 
+        // GET: api/Personnel/GetPersonnelsNonResaBySiteAndDate
+        [Authorize(Roles = "user,admin,super-admin")]
+        [Route("GetPersonnelsNonResaBySiteAndDate/{idSite}/{dateDebut}/{dateFin}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PersonnelViewModel>>> GetPersonnelsNonResaBySiteAndDate(Guid idSite, DateTime dateDebut, DateTime dateFin)
+        {
+            var listP = new List<PersonnelViewModel>();
+            var listPersonnelReserve = ListPersonnelReserve(dateDebut, dateFin);
+            foreach (var personnel in await _context.Personnel
+                                                .Include(p => p.Site)
+                                                .ThenInclude(p => p.Entreprise)
+                                                .Where(p => p.Site.Id == idSite && !listPersonnelReserve.Contains(p.Id))
+                                                .OrderBy(p => p.Nom).ThenBy(p => p.Prenom)
+                                                .ToListAsync())
+            {
+                listP.Add(new PersonnelViewModel(personnel));
+            }
+
+            return listP;
+        }
+
         [Authorize(Roles = "user,admin,super-admin")]
         // GET: api/Personnel/5
         [HttpGet("{id}")]
@@ -136,6 +157,28 @@ namespace KMAP_API.Controllers
         private bool PersonnelExists(Guid id)
         {
             return _context.Personnel.Any(e => e.Id == id);
+        }
+
+        private HashSet<Guid> ListPersonnelReserve(DateTime dateDebut, DateTime dateFin)
+        {
+            var personnelResa = new HashSet<Guid>();
+            var prs =  _context.Reservation.Where(r =>
+                (r.DateFin >= dateDebut && r.DateFin <= dateFin) ||
+                (r.DateDebut >= dateDebut && r.DateDebut <= dateFin) ||
+                (r.DateDebut <= dateDebut && r.DateFin >= dateFin) && r.IsRejeted == false)
+                .Include(r => r.Personnel_Reservations)
+                .Select(r => r.Personnel_Reservations.Select(pr => pr.PersonnelId))
+                .ToList();
+
+            foreach (var pr in prs)
+            {
+                foreach (var idP in pr)
+                {
+                    personnelResa.Add(idP);
+                }
+            }
+
+            return personnelResa;
         }
 
         #endregion

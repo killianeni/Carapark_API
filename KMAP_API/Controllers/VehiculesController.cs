@@ -47,9 +47,9 @@ namespace KMAP_API.Controllers
         public async Task<ActionResult<IEnumerable<VehiculeViewModel>>> GetVehiculesNonResaBySiteAndDate(Guid id, DateTime dateDebut, DateTime dateFin)
         {
             var v = new List<VehiculeViewModel>();
-            var listeVehiculeReserve = ListeVehiculeReserve(dateDebut, dateFin);
+            var listVehiculeReserve = ListVehiculeReserve(dateDebut, dateFin);
             foreach (var vehicule in await _context.Vehicule
-                                            .Where(v => v.Site.Id == id && !listeVehiculeReserve.Contains(v.Id) && v.Actif)
+                                            .Where(v => v.Site.Id == id && !listVehiculeReserve.Contains(v.Id) && v.Actif)
                                             .Include(v => v.Cles)
                                             .Include(v => v.Site)
                                             .OrderByDescending(v => v.NbPlaces)
@@ -195,7 +195,7 @@ namespace KMAP_API.Controllers
             return _context.Vehicule.Any(e => e.Id == id);
         }
 
-        private HashSet<Guid> ListeVehiculeReserve(DateTime dateDebut, DateTime dateFin)
+        private HashSet<Guid> ListVehiculeReserve(DateTime dateDebut, DateTime dateFin)
         {
             return _context.Reservation.Where(r =>
                 (r.DateFin >= dateDebut && r.DateFin <= dateFin) ||
