@@ -172,18 +172,22 @@ namespace KMAP_API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("UpUtilisateur")]
-        public async Task<ActionResult<Utilisateur>> UpUtilisateur(UtilisateurViewModel utilisateurVM)
+        public async Task<ActionResult<Utilisateur>> UpUtilisateurs(List<UtilisateurViewModel> utilisateursVM)
         {
-            var personne = _context.Personnel.Include(p => p.Site).Include(p => p.Personnel_Reservations).FirstOrDefault(p => p.Id == utilisateurVM.Id);
-
-            var utilisateur = new Utilisateur(personne)
+            foreach (var utilisateurVM in utilisateursVM)
             {
-                Role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id),
-                Password = BCrypt.Net.BCrypt.HashPassword(utilisateurVM.Password)
-            };
+                var personne = _context.Personnel.Include(p => p.Site).Include(p => p.Personnel_Reservations).FirstOrDefault(p => p.Id == utilisateurVM.Id);
 
-            _context.Personnel.Remove(personne);
-            _context.Utilisateur.Add(utilisateur);
+                var utilisateur = new Utilisateur(personne)
+                {
+                    Role = _context.Role.FirstOrDefault(r => r.Id == utilisateurVM.Role.Id),
+                    Password = BCrypt.Net.BCrypt.HashPassword(utilisateurVM.Password)
+                };
+
+                _context.Personnel.Remove(personne);
+                _context.Utilisateur.Add(utilisateur);
+
+            }
 
             await _context.SaveChangesAsync();
 
