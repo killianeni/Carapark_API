@@ -22,7 +22,7 @@ namespace KMAP_API.Models
 
         public Site Site { get; set; }
 
-        public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
+        public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; } = new List<Personnel_Reservation>();
 
         public Personnel()
         {

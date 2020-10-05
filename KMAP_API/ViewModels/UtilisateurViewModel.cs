@@ -16,7 +16,7 @@ namespace KMAP_API.ViewModels
 
         public SiteViewModel Site { get; set; }
 
-        public ICollection<Personnel_Reservation> Personnel_Reservations { get; set; }
+        public ICollection<Personnel_ReservationViewModel> Personnel_Reservations { get; set; } = new List<Personnel_ReservationViewModel>();
 
         public UtilisateurViewModel() : base()
         {
@@ -41,7 +41,10 @@ namespace KMAP_API.ViewModels
                 Id = u.Site.Id,
                 Libelle = u.Site.Libelle
             };
-            Personnel_Reservations = u.Personnel_Reservations;
+            foreach (var pr in u.Personnel_Reservations)
+            {
+                Personnel_Reservations.Add(new Personnel_ReservationViewModel(pr));
+            }
         }
     }
 }
