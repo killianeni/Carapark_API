@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KMAP_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin,super-admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "user,admin,super-admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonnelController : ControllerBase
@@ -83,6 +83,7 @@ namespace KMAP_API.Controllers
         // PUT: api/Personnel/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "admin,super-admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPersonnel(Guid id, PersonnelViewModel personnelVM)
         {
@@ -118,6 +119,7 @@ namespace KMAP_API.Controllers
         // POST: api/Personnel
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "admin,super-admin")]
         [HttpPost]
         public async Task<ActionResult<Personnel>> PostPersonnel(PersonnelViewModel personnelVM)
         {
@@ -137,6 +139,7 @@ namespace KMAP_API.Controllers
         }
 
         // DELETE: api/Personnel/5
+        [Authorize(Roles = "admin,super-admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Personnel>> DeletePersonnel(Guid id)
         {
